@@ -1,14 +1,19 @@
-import * as React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import React, {useRef} from 'react';
+import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import firebase from 'firebase/compat/app';
+import * as firebaseui from 'firebaseui'
+// import 'firebaseui/dist/firebaseui.css'
+// import { Form, Button, Card } from 'react-native-bootstrap-styles'
+
 
 export default function LoginScreen({ navigation }) {
+  const email = useRef(null);
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Login Screen</Text>
-        <Button
-          title="Skip login"
-          onPress={() => navigation.push("Map")}
-        />
-      </View>
+      <>
+      <TextInput placeholder='Enter your email' ref={email}>
+
+      </TextInput>
+      <Button onSubmit={console.log(email)}></Button>
+      </>
     );
 }
