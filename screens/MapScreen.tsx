@@ -1,5 +1,6 @@
 import * as React from "react";
 import MapView from "react-native-maps";
+import { Marker } from "react-native-maps";
 import Geojson from "react-native-geojson";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 
@@ -465,12 +466,15 @@ export default function MapScreen() {
     ],
   };
 
+  const testCoord = { latitude: 53.8369815, longitude: -1.4964706 };
+
   return (
     <View style={styles.container}>
       <MapView
         style={styles.map}
         provider={"google"}
         mapType={"standard"}
+        showsCompass={true}
         initialRegion={{
           latitude: 53.8369815,
           longitude: -1.4964706,
@@ -479,6 +483,7 @@ export default function MapScreen() {
         }}
       >
         <Geojson geojson={roundhay} />
+        <Marker coordinate={testCoord} />
       </MapView>
     </View>
   );
