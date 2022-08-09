@@ -21,7 +21,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Signup">
         <Stack.Screen name="Signup" component={SignupScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} setUser={{setUser}}/>
+        <Stack.Screen name="Login" component={LoginScreen}/>
         <Stack.Screen name="Map" component={MapScreen} />
         <Stack.Screen name="Photos" component={PhotosScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />

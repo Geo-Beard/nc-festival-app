@@ -26,21 +26,18 @@ export default function LoginScreen({ navigation }) {
   };
 
   useEffect(() => {
-    console.log(submitted);
     if (submitted) {
       const auth = getAuth(app);
       createUserWithEmailAndPassword(auth, email.email, password.password)
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          console.log(user);
           // ...
         })
         .catch((error) => {
           setSubmitted(false);
           const errorCode = error.code;
           const errorMessage = error.message;
-          console.log(errorCode, errorMessage);
         });
     }
   }, [submitted]);
