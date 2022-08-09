@@ -29,6 +29,7 @@ export default function LoginScreen ({navigation, setUser}) {
               setUser({uid: firebaseUser.uid,
                 email: firebaseUser.email,
                 displayName: firebaseUser.displayName })
+                
               // ...
             })
             .then(() => {
