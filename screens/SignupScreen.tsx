@@ -16,6 +16,8 @@ export default function LoginScreen({ navigation }) {
   });
   const [submitted, setSubmitted] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
+  const [signupSuccess, setSignupSuccess] = useState(false);
+
 
   const handleEmail = (emailString: string) => {
     setEmail({ email: emailString });
@@ -47,8 +49,9 @@ export default function LoginScreen({ navigation }) {
               displayName: username,
             });
           }
-          console.log(user);
-          // ...
+        })
+        .then(() => {
+          setSignupSuccess(true);
         })
         .catch((error) => {
           setSubmitted(false);
@@ -60,6 +63,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <>
+    {signupSuccess && <Text>Signup successful! Please log in to continue</Text>}
       <View>
         <TextInput
           placeholder="Email"
