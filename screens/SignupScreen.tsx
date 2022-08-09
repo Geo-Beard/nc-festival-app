@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Text, View, TextInput, Button } from "react-native";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { app } from "../firebase-config/firebase-config";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState<{ email: string }>({ email: "" });
@@ -12,9 +15,14 @@ export default function LoginScreen({ navigation }) {
     password: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
 
   const handleEmail = (emailString: string) => {
     setEmail({ email: emailString });
+  };
+
+  const handleUsername = (usernameString: string) => {
+    setUsername(usernameString);
   };
 
   const handlePassword = (passwordString: string) => {
@@ -27,11 +35,19 @@ export default function LoginScreen({ navigation }) {
 
   useEffect(() => {
     if (submitted) {
-      const auth = getAuth(app);
+      const auth = getAuth();
+
       createUserWithEmailAndPassword(auth, email.email, password.password)
-        .then((userCredential) => {
+        .then(() => {
           // Signed in
-          const user = userCredential.user;
+          //update displayname
+          const user = auth.currentUser;
+          if (user) {
+            updateProfile(user, {
+              displayName: username,
+            });
+          }
+          console.log(user);
           // ...
         })
         .catch((error) => {
@@ -49,6 +65,11 @@ export default function LoginScreen({ navigation }) {
           placeholder="Email"
           accessibilityLabel="Email"
           onChangeText={handleEmail}
+        />
+        <TextInput
+          placeholder="Username"
+          accessibilityLabel="Username"
+          onChangeText={handleUsername}
         />
         <TextInput
           placeholder="Password"
