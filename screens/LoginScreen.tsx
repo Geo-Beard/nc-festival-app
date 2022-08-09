@@ -1,19 +1,51 @@
-import React, {useRef} from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
-import firebase from 'firebase/compat/app';
-import * as firebaseui from 'firebaseui'
-// import 'firebaseui/dist/firebaseui.css'
-// import { Form, Button, Card } from 'react-native-bootstrap-styles'
-
+import React, { useState } from "react";
+import { StyleSheet, Text, View, TextInput, Button } from "react-native";
+import firebase from "firebase/compat/app";
+import * as firebaseui from "firebaseui";
 
 export default function LoginScreen({ navigation }) {
-  const email = useRef(null);
-    return (
-      <>
-      <TextInput placeholder='Enter your email' ref={email}>
+  const [email, setEmail] = useState<{ email: string }>({ email: "" });
+  const [password, setPassword] = useState<{ password: string }>({
+    password: "",
+  });
+  const [confirmPassword, setConfirmPassword] = useState<{ password: string }>({
+    password: "",
+  });
 
-      </TextInput>
-      <Button onSubmit={console.log(email)}></Button>
-      </>
-    );
+  const handleEmail = (emailString: string) => {
+    setEmail({ email: emailString });
+  };
+
+  const handlePassword = (passwordString: string) => {
+    setPassword({ password: passwordString });
+  };
+
+  const handleConfirmPassword = (passwordString: string) => {
+    setConfirmPassword({ password: passwordString });
+  };
+
+  return (
+    <>
+      <View>
+        <TextInput
+          placeholder="Email"
+          accessibilityLabel="Email"
+          onChangeText={handleEmail}
+        />
+        <TextInput
+          placeholder="Password"
+          accessibilityLabel="Password"
+          onChangeText={handlePassword}
+          secureTextEntry={true}
+        />
+         <TextInput
+          placeholder="Confirm Password"
+          accessibilityLabel="Confirm Password"
+          onChangeText={handleConfirmPassword}
+          secureTextEntry={true}
+        />
+        <Button title="Sign Up"/>
+      </View>
+    </>
+  );
 }
