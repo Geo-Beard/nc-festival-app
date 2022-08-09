@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, TextInput, Button } from "react-native";
-import firebase from "firebase/compat/app";
-import * as firebaseui from "firebaseui";
+import React, { useEffect, useState } from "react";
+import { View, TextInput, Button } from "react-native";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { app } from "../firebase-config/firebase-config";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState<{ email: string }>({ email: "" });
@@ -11,6 +11,7 @@ export default function LoginScreen({ navigation }) {
   const [confirmPassword, setConfirmPassword] = useState<{ password: string }>({
     password: "",
   });
+  const [submitted, setSubmitted] = useState(false);
 
   const handleEmail = (emailString: string) => {
     setEmail({ email: emailString });
@@ -23,6 +24,26 @@ export default function LoginScreen({ navigation }) {
   const handleConfirmPassword = (passwordString: string) => {
     setConfirmPassword({ password: passwordString });
   };
+
+  useEffect(() => {
+    console.log(submitted);
+    if (submitted) {
+      const auth = getAuth(app);
+      createUserWithEmailAndPassword(auth, email.email, password.password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log(user);
+          // ...
+        })
+        .catch((error) => {
+          setSubmitted(false);
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode, errorMessage);
+        });
+    }
+  }, [submitted]);
 
   return (
     <>
@@ -38,13 +59,13 @@ export default function LoginScreen({ navigation }) {
           onChangeText={handlePassword}
           secureTextEntry={true}
         />
-         <TextInput
+        <TextInput
           placeholder="Confirm Password"
           accessibilityLabel="Confirm Password"
           onChangeText={handleConfirmPassword}
           secureTextEntry={true}
         />
-        <Button title="Sign Up"/>
+        <Button onPress={() => setSubmitted(true)} title="Sign Up" />
       </View>
     </>
   );
