@@ -17,6 +17,7 @@ export default function LoginScreen({ navigation }) {
   const [submitted, setSubmitted] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
   const [signupSuccess, setSignupSuccess] = useState(false);
+  const [error, setError] = useState< string | null >(null);
 
 
   const handleEmail = (emailString: string) => {
@@ -35,8 +36,15 @@ export default function LoginScreen({ navigation }) {
     setConfirmPassword({ password: passwordString });
   };
 
+  function signUpLogic () {
+    if (password && confirmPassword && username && email) {
+
+      return true;
+    }
+  }
+
   useEffect(() => {
-    if (submitted) {
+    if (submitted && signUpLogic()) {
       const auth = getAuth();
 
       createUserWithEmailAndPassword(auth, email.email, password.password)
@@ -58,6 +66,9 @@ export default function LoginScreen({ navigation }) {
           const errorCode = error.code;
           const errorMessage = error.message;
         });
+    }
+    else if (submitted) {
+      setError("Missing details")
     }
   }, [submitted]);
 
@@ -88,8 +99,10 @@ export default function LoginScreen({ navigation }) {
           secureTextEntry={true}
         />
         <Button onPress={() => setSubmitted(true)} title="Sign Up" />
+        {error && <Text>{error}</Text>}
         <Button onPress={() => navigation.navigate("Login")} title="Log In" />
       </View>
+
     </>
   );
 }
