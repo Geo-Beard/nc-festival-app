@@ -17,7 +17,9 @@ export default function LoginScreen({ navigation }) {
   const [submitted, setSubmitted] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
   const [signupSuccess, setSignupSuccess] = useState(false);
-  const [error, setError] = useState< string | null >(null);
+  const [missingDetailsError, setMissingDetailsError] = useState< string | null >(null);
+  const [mismatchedPasswordsError, setMismatchedPasswordsError] = useState< string | null >(null);
+
 
 
   const handleEmail = (emailString: string) => {
@@ -37,20 +39,34 @@ export default function LoginScreen({ navigation }) {
   };
 
   function signUpLogic () {
-    if (password && confirmPassword && username && email) {
-
+    if (password !== confirmPassword) {
+      setMismatchedPasswordsError("Passwords don't match");
+    }
+    else if (password && confirmPassword && username && email && password === confirmPassword) {
       return true;
     }
   }
 
-  useEffect(() => {
-    if (submitted && signUpLogic()) {
-      const auth = getAuth();
+  function passwordLogic () {
+    if (password === confirmPassword) {
+      return true;
+    }
+  }
 
+  function missingDetailsLogic () {
+    if (password && confirmPassword && username && email) {
+      return true;
+    }
+  } 
+
+  useEffect(() => {
+
+    setMismatchedPasswordsError(null);
+    setMissingDetailsError(null);
+    if (submitted && missingDetailsLogic() && passwordLogic()) {
+      const auth = getAuth();
       createUserWithEmailAndPassword(auth, email.email, password.password)
         .then(() => {
-          // Signed in
-          //update displayname
           const user = auth.currentUser;
           if (user) {
             updateProfile(user, {
@@ -67,9 +83,13 @@ export default function LoginScreen({ navigation }) {
           const errorMessage = error.message;
         });
     }
-    else if (submitted) {
-      setError("Missing details")
+    if (!missingDetailsLogic() && submitted) {
+      setMissingDetailsError("Missing details")
     }
+    if (!passwordLogic() && submitted) {
+      setMismatchedPasswordsError("Passwords don't match");
+    }
+    setSubmitted(false);
   }, [submitted]);
 
   return (
@@ -99,7 +119,8 @@ export default function LoginScreen({ navigation }) {
           secureTextEntry={true}
         />
         <Button onPress={() => setSubmitted(true)} title="Sign Up" />
-        {error && <Text>{error}</Text>}
+        {missingDetailsError && <Text>{missingDetailsError}</Text>}
+        {mismatchedPasswordsError && <Text>{mismatchedPasswordsError}</Text>}
         <Button onPress={() => navigation.navigate("Login")} title="Log In" />
       </View>
 
