@@ -1,54 +1,51 @@
-import React, { useEffect, useState } from "react";
-import { View, TextInput, Button } from "react-native";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { View, Text, Button, TextInput } from "react-native"
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { app } from "../firebase-config/firebase-config";
+import { useState, useEffect } from "react";
 
-export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState<{ email: string }>({ email: "" });
-  const [password, setPassword] = useState<{ password: string }>({
-    password: "",
-  });
-  const [confirmPassword, setConfirmPassword] = useState<{ password: string }>({
-    password: "",
-  });
-  const [submitted, setSubmitted] = useState(false);
 
-  const handleEmail = (emailString: string) => {
-    setEmail({ email: emailString });
-  };
+export default function LoginScreen ({navigation, setUser}) {
+    const [submitted, setSubmitted] = useState(false)
+    const [email, setEmail] = useState<{ email: string }>({ email: "" });
+    const [password, setPassword] = useState<{ password: string }>({
+      password: "",
+    });
 
-  const handlePassword = (passwordString: string) => {
-    setPassword({ password: passwordString });
-  };
+    const handleEmail = (emailString: string) => {
+        setEmail({ email: emailString });
+      };
+    
+      const handlePassword = (passwordString: string) => {
+        setPassword({ password: passwordString });
+      };
 
-  const handleConfirmPassword = (passwordString: string) => {
-    setConfirmPassword({ password: passwordString });
-  };
+    useEffect(() => {
+        if (submitted) {
+          const auth = getAuth(app);
+          signInWithEmailAndPassword(auth, email.email, password.password)
+            .then((userCredential) => {
+              // Signed in
+              const firebaseUser = userCredential.user;
+              setUser({uid: firebaseUser.uid,
+                email: firebaseUser.email,
+                displayName: firebaseUser.displayName })
+              // ...
+            })
+            .then(() => {
+                navigation.navigate("Map")
+            })
+            .catch((error) => {
+              setSubmitted(false);
+              const errorCode = error.code;
+              const errorMessage = error.message;
+              console.log(errorCode, errorMessage);
+            });
+        }
+      }, [submitted]);
 
-  useEffect(() => {
-    console.log(submitted);
-    if (submitted) {
-      const auth = getAuth(app);
-      createUserWithEmailAndPassword(auth, email.email, password.password)
-        .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          console.log(user);
-          // ...
-        })
-        .catch((error) => {
-          setSubmitted(false);
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(errorCode, errorMessage);
-        });
-    }
-  }, [submitted]);
-
-  return (
-    <>
-      <View>
-        <TextInput
+    return (
+    <View>
+         <TextInput
           placeholder="Email"
           accessibilityLabel="Email"
           onChangeText={handleEmail}
@@ -59,14 +56,7 @@ export default function LoginScreen({ navigation }) {
           onChangeText={handlePassword}
           secureTextEntry={true}
         />
-        <TextInput
-          placeholder="Confirm Password"
-          accessibilityLabel="Confirm Password"
-          onChangeText={handleConfirmPassword}
-          secureTextEntry={true}
-        />
-        <Button onPress={() => setSubmitted(true)} title="Sign Up" />
-      </View>
-    </>
-  );
+           <Button onPress={() => setSubmitted(true)} title="Log In" />
+    </View>
+    )
 }
