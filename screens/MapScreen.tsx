@@ -1,12 +1,14 @@
 import * as React from "react";
-import MapView from "react-native-maps";
+import { useRef } from "react";
+import MapView, { Polygon } from "react-native-maps";
 import { Marker, Callout } from "react-native-maps";
 import Geojson from "react-native-geojson";
-import { StyleSheet, Text, View, Dimensions, Button } from "react-native";
+import { StyleSheet, Text, View, Dimensions } from "react-native";
 import * as Location from "expo-location";
 import { useState, useEffect } from "react";
-import { roundhay } from "../assets/polygons/Festival_Map";
 import { v4 as uuidv4 } from "uuid";
+import * as polys from "../assets/polygons/index";
+import favicon from "../assets/favicon.png";
 
 export default function MapScreen() {
   const [location, setLocation] = useState(null);
@@ -61,6 +63,7 @@ export default function MapScreen() {
     <View style={styles.container}>
       <MapView
         style={styles.map}
+        customMapStyle={mapStyle}
         provider={"google"}
         mapType={"standard"}
         showsCompass={true}
@@ -76,7 +79,99 @@ export default function MapScreen() {
           handleMarker(event);
         }}
       >
-        <Geojson geojson={roundhay} />
+        {/* MARKER LOCATION OVERLAYS */}
+        <View>
+          {/* TEST MARKER WITH FAVICON */}
+          <Marker
+            coordinate={{ latitude: 53.8387116, longitude: -1.4976144 }}
+            icon={favicon}
+          />
+        </View>
+
+        {/* GEOJSON MAP OVERLAYS */}
+        <View>
+          <Geojson
+            geojson={polys.mainParking}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.accessPath}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.accessPath2}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.campingArea}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.dropOff}
+            fillColor="rgba(130, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.dropOff2}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.mainAreaOne}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.mainCamping}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.mainParking}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.mainRoad}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.mainRoad2}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.mainStages}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.nightEntertainment}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.staffCamping}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.staffEntrance}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.staffParking}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.vendorsArea}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.vendorArea2}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.vipCamping}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.westRoad}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+        </View>
+
         <View>
           {markers.map((mark) => {
             return (
@@ -115,3 +210,30 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").height / 1.1,
   },
 });
+
+const mapStyle = [
+  {
+    elementType: "labels",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+  {
+    featureType: "administrative.land_parcel",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+  {
+    featureType: "administrative.neighborhood",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+];
