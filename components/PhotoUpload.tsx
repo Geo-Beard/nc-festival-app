@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Image, View, Alert, Platform } from "react-native";
+import { Button, Image, View, Alert, Platform, Text } from "react-native";
 //select image
 import * as ImagePicker from "expo-image-picker";
 //upload image to firebase
@@ -8,7 +8,7 @@ import { getStorage, ref, uploadBytes } from "firebase/storage";
 export default function PhotoUpload() {
   const [image, setImage] = useState<string | undefined>();
   const [hasPermission, setHasPermission] = useState(false);
-  // const [uploading, setUploading] = useState(false);
+  const [isUploaded, setIsUploaded] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -49,6 +49,7 @@ export default function PhotoUpload() {
       const bytes = await img.blob();
       //upload images
       await uploadBytes(imageRef, bytes);
+      setIsUploaded(true);
     }
   };
 
@@ -59,10 +60,14 @@ export default function PhotoUpload() {
       )}
       <Button
         title="Select Photo"
-        onPress={pickImage}
+        onPress={() => {
+          pickImage();
+          setIsUploaded(false);
+        }}
         disabled={!hasPermission}
       />
       <Button title="Upload Photo" onPress={uploadImage} />
+      {isUploaded && <Text>Photo was uploaded successfully!</Text>}
     </View>
   );
 }
