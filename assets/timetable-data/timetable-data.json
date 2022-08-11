@@ -1,0 +1,40 @@
+{
+  "roundhay-festival": {
+    "friday": {
+      "stage-1": {
+        "times": {
+          "1300": "Wolf Alice",
+          "1400": "Fontaines D.C.",
+          "1500": "Bad Boy Chiller Crew",
+          "1600": "Arctic Monkeys"
+        }
+      },
+      "stage-2": {
+        "times": {
+          "1300": "Tame Impala",
+          "1400": "The Mouse Outfit",
+          "1500": "Khruangbin",
+          "1600": "Too Many Zoos"
+        }
+      }
+    },
+    "saturday": {
+      "stage-1": {
+        "times": {
+          "1300": "Foals",
+          "1400": "The Libertines",
+          "1500": "Idles",
+          "1600": "Hak Baker"
+        }
+      },
+      "stage-2": {
+        "times": {
+          "1300": "Lianne La Havas",
+          "1400": "Skunk Anansie",
+          "1500": "Metronomy",
+          "1600": "Haim"
+        }
+      }
+    }
+  }
+}
