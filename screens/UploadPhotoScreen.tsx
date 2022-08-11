@@ -12,7 +12,7 @@ import { db } from "../firebase-config/firebase-config";
 //get current signed-in user
 import { getAuth } from "firebase/auth";
 
-export default function PhotoUpload() {
+export default function UploadPhotoScreen() {
   const [image, setImage] = useState<string | undefined>();
   const [hasPermission, setHasPermission] = useState(false);
   const [isUploaded, setIsUploaded] = useState(false);
