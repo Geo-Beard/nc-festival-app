@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
-import { db } from './firebase-config/firebase-config';
 import SignupScreen from './screens/SignupScreen';
 import MapScreen from './screens/MapScreen';
 import PhotosScreen from './screens/PhotosScreen';
@@ -12,16 +10,12 @@ import LoginScreen from './screens/LoginScreen';
 import TimetableScreen from './screens/TimetableScreen';
 import PersonalTimetableScreen from "./screens/PersonalTimetableScreen"
 import UploadPhotoScreen from './screens/UploadPhotoScreen';
-import { UserContext } from "./context/userContext"
 import DatabaseTest from './screens/DatabaseTest'
-import { useState } from 'react';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [user, setUser] = useState(null)
   return (
-    <UserContext.Provider value={user}>
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Signup">
         <Stack.Screen name="Signup" component={SignupScreen} />
@@ -36,7 +30,6 @@ export default function App() {
         
       </Stack.Navigator>
     </NavigationContainer>
-    </UserContext.Provider>
   );
 }
 
