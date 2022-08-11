@@ -57,7 +57,11 @@ export default function PersonalTimetableScreen () {
       <ScrollView>
         <Text>My Timetable</Text>
         {userTimetable.length === 0 && <Text>You haven't added any events yet.</Text>}
-        {userTimetable.length !== 0 && userTimetable.map(event => {return (<Text key={event}>{event}</Text>)})}
+        {userTimetable.length !== 0 && userTimetable.map(event => {return (
+        <>
+        
+          <Text key={event}>{event}</Text>
+          <Pressable key={event+Math.random()}><Text key={event+Math.random()}>x</Text></Pressable></>)})}
 
 
         <View style={styles.centeredView}>
