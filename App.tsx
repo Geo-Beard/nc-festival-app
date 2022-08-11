@@ -20,7 +20,7 @@ export default function App() {
     <UserContext.Provider value={user}>
       <NavigationContainer>
         {/* Temporary Map Home Screen for Testing */}
-        <Stack.Navigator initialRouteName="Map">
+        <Stack.Navigator initialRouteName="Signup">
           <Stack.Screen name="Signup" component={SignupScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Map" component={MapScreen} />
