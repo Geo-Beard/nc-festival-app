@@ -9,6 +9,7 @@ import MapScreen from './screens/MapScreen';
 import PhotosScreen from './screens/PhotosScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import LoginScreen from './screens/LoginScreen';
+import UploadPhotoScreen from './screens/UploadPhotoScreen';
 import { UserContext } from "./context/userContext"
 import { useState } from 'react';
 
@@ -24,6 +25,7 @@ export default function App() {
         <Stack.Screen name="Login" component={LoginScreen}/>
         <Stack.Screen name="Map" component={MapScreen} />
         <Stack.Screen name="Photos" component={PhotosScreen} />
+        <Stack.Screen name="UploadPhoto" component={UploadPhotoScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>

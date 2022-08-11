@@ -118,6 +118,7 @@ export default function LoginScreen({ navigation }) {
         {missingDetailsError && <Text>Missing Details</Text>}
         {mismatchedPasswordsError && <Text>Passwords Do Not Match</Text>}
         <Button onPress={() => navigation.navigate("Login")} title="Log In" />
+        <Button onPress={() => navigation.navigate("Photos")} title="Photos" />
       </View>
     </>
   );
