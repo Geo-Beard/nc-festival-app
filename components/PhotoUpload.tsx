@@ -3,12 +3,26 @@ import { Button, Image, View, Alert, Platform, Text } from "react-native";
 //select image
 import * as ImagePicker from "expo-image-picker";
 //upload image to firebase
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+//unique ref per image upload
+import { v4 as uuidv4 } from "uuid";
+//create image database
+import { collection, addDoc, serverTimestamp } from "@firebase/firestore";
+import { db } from "../firebase-config/firebase-config";
+//get current signed-in user
+import { getAuth } from "firebase/auth";
 
 export default function PhotoUpload() {
   const [image, setImage] = useState<string | undefined>();
   const [hasPermission, setHasPermission] = useState(false);
   const [isUploaded, setIsUploaded] = useState(false);
+  const [url, setUrl] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState(false);
+
+  //current logged in user
+  const auth = getAuth();
+  const user = auth.currentUser;
+  console.log(user);
 
   useEffect(() => {
     (async () => {
@@ -40,16 +54,29 @@ export default function PhotoUpload() {
 
   const uploadImage = async () => {
     if (image) {
-      // storage itself
-      const storage = getStorage();
-      //how the image will be addressed inside the storage
-      const imageRef = ref(storage, "image.jpg");
-      //convert image to array of bytes
-      const img = await fetch(image);
-      const bytes = await img.blob();
-      //upload images
-      await uploadBytes(imageRef, bytes);
-      setIsUploaded(true);
+      try {
+        // storage itself
+        const storage = getStorage();
+        //how the image will be addressed inside the storage
+        const uuid = uuidv4();
+        const imageRef = ref(storage, `images/${uuid}`);
+        //convert image to array of bytes
+        const img = await fetch(image);
+        const bytes = await img.blob();
+        //upload images
+        await uploadBytes(imageRef, bytes);
+        //image database
+        const imageUrl = await getDownloadURL(ref(storage, `images/${uuid}`));
+        await addDoc(collection(db, "festivalImages"), {
+          imageUrl: imageUrl,
+          createdAt: serverTimestamp(),
+          likes: 0,
+          userId: user?.uid,
+        });
+        setIsUploaded(true);
+      } catch (e) {
+        setUploadError(true);
+      }
     }
   };
 
@@ -61,13 +88,24 @@ export default function PhotoUpload() {
       <Button
         title="Select Photo"
         onPress={() => {
+          setUploadError(false);
           pickImage();
           setIsUploaded(false);
         }}
         disabled={!hasPermission}
       />
-      <Button title="Upload Photo" onPress={uploadImage} />
+      <Button
+        title="Upload Photo"
+        onPress={() => {
+          setIsUploaded(false);
+          setUploadError(false);
+          uploadImage();
+        }}
+      />
       {isUploaded && <Text>Photo was uploaded successfully!</Text>}
+      {uploadError && (
+        <Text>Unable to upload selected photo, please try again</Text>
+      )}
     </View>
   );
 }

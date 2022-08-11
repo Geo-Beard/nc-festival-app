@@ -64,6 +64,7 @@ export default function LoginScreen({ navigation }) {
         />
         <Button onPress={() => setSubmitted(true)} title="Sign Up" />
         <Button onPress={() => navigation.navigate("Login")} title="Log In" />
+        <Button onPress={() => navigation.navigate("Photos")} title="Photos" />
       </View>
     </>
   );

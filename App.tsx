@@ -19,7 +19,7 @@ export default function App() {
   return (
     <UserContext.Provider value={user}>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Photos">
+      <Stack.Navigator initialRouteName="Signup">
         <Stack.Screen name="Signup" component={SignupScreen} />
         <Stack.Screen name="Login" component={LoginScreen}/>
         <Stack.Screen name="Map" component={MapScreen} />
