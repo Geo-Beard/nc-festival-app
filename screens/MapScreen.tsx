@@ -8,11 +8,13 @@ import * as Location from "expo-location";
 import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import * as polys from "../assets/polygons/index";
+import * as builds from "../assets/buildings/index";
 import favicon from "../assets/favicon.png";
 
 export default function MapScreen() {
   const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
+  // look up typescript interface
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const testCoord = {
     latitude: 53.8369815,
@@ -79,12 +81,11 @@ export default function MapScreen() {
           handleMarker(event);
         }}
       >
-        {/* MARKER LOCATION OVERLAYS */}
+        {/* GEOJSON MAP BOUNDARY BASE LAYER */}
         <View>
-          {/* TEST MARKER WITH FAVICON */}
-          <Marker
-            coordinate={{ latitude: 53.8387116, longitude: -1.4976144 }}
-            icon={favicon}
+          <Geojson
+            geojson={builds.festivalBoundary}
+            fillColor="rgba(100, 10, 0, 0.3)"
           />
         </View>
 
@@ -169,6 +170,43 @@ export default function MapScreen() {
           <Geojson
             geojson={polys.westRoad}
             fillColor="rgba(42, 30, 190, 0.5)"
+          />
+        </View>
+
+        {/* GEOJSON MAP BUILDINGS */}
+        <View>
+          <Geojson
+            geojson={builds.festivalFood}
+            fillColor="rgba(100, 10, 0, 0.4)"
+          />
+          <Geojson
+            geojson={builds.festivalInfoTickets}
+            fillColor="rgba(100, 10, 0, 0.4)"
+          />
+          <Geojson
+            geojson={builds.festivalMedical}
+            fillColor="rgba(100, 10, 0, 0.4)"
+          />
+          <Geojson
+            geojson={builds.festivalStages}
+            fillColor="rgba(100, 10, 0, 0.4)"
+          />
+          <Geojson
+            geojson={builds.festivalToilets}
+            fillColor="rgba(100, 10, 0, 0.4)"
+          />
+          <Geojson
+            geojson={builds.festivalVendors}
+            fillColor="rgba(100, 10, 0, 0.4)"
+          />
+        </View>
+
+        {/* MARKER LOCATION OVERLAYS */}
+        <View>
+          {/* TEST MARKER WITH FAVICON */}
+          <Marker
+            coordinate={{ latitude: 53.8387116, longitude: -1.4976144 }}
+            icon={favicon}
           />
         </View>
 
