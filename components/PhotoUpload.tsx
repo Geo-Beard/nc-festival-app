@@ -16,13 +16,11 @@ export default function PhotoUpload() {
   const [image, setImage] = useState<string | undefined>();
   const [hasPermission, setHasPermission] = useState(false);
   const [isUploaded, setIsUploaded] = useState(false);
-  const [url, setUrl] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState(false);
 
   //current logged in user
   const auth = getAuth();
   const user = auth.currentUser;
-  console.log(user);
 
   useEffect(() => {
     (async () => {
