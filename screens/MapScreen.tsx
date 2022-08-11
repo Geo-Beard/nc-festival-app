@@ -1,27 +1,21 @@
 import * as React from "react";
-import { useRef } from "react";
-import MapView, { Polygon } from "react-native-maps";
+import { useState, useEffect } from "react";
+import { StyleSheet, Text, View, Dimensions } from "react-native";
+import MapView from "react-native-maps";
 import { Marker, Callout } from "react-native-maps";
 import Geojson from "react-native-geojson";
-import { StyleSheet, Text, View, Dimensions } from "react-native";
 import * as Location from "expo-location";
-import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import * as polys from "../assets/polygons/index";
 import * as builds from "../assets/buildings/index";
-import favicon from "../assets/favicon.png";
+import * as mapPins from "../assets/map-pins/index";
 
 export default function MapScreen() {
-  const [location, setLocation] = useState(null);
   // look up typescript interface
+  const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const testCoord = {
-    latitude: 53.8369815,
-    longitude: -1.4964706,
-    markerId: 1,
-  };
-  const [markers, setMarkers] = useState([testCoord]);
+  const [markers, setMarkers] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -30,7 +24,6 @@ export default function MapScreen() {
         setErrorMsg("Permission to access location was denied");
         return;
       }
-
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
     })();
@@ -50,7 +43,6 @@ export default function MapScreen() {
       markerId: uuidv4(),
     };
     setMarkers([...markers, newMarker]);
-    console.log(markers, "<<< handleMarker");
   }
 
   function deleteMarker(markerId) {
@@ -58,7 +50,6 @@ export default function MapScreen() {
       return marker.markerId !== markerId;
     });
     setMarkers(updatedMarkers);
-    console.log(updatedMarkers, "<<< deleteMarker");
   }
 
   return (
@@ -77,7 +68,6 @@ export default function MapScreen() {
           longitudeDelta: 0.0,
         }}
         onLongPress={(event) => {
-          console.log(event.nativeEvent);
           handleMarker(event);
         }}
       >
@@ -201,12 +191,36 @@ export default function MapScreen() {
           />
         </View>
 
-        {/* MARKER LOCATION OVERLAYS */}
+        {/* TEST MARKER WITH ICONS */}
+        <Marker
+          coordinate={{ latitude: 53.8406639, longitude: -1.4915975 }}
+          icon={mapPins.yellowTentPin}
+          anchor={{ x: 0.5, y: 0.5 }}
+        />
+
+        {/* FESTIVAL MARKER LOCATIONS */}
         <View>
-          {/* TEST MARKER WITH FAVICON */}
           <Marker
-            coordinate={{ latitude: 53.8387116, longitude: -1.4976144 }}
-            icon={favicon}
+            coordinate={{ latitude: 53.8330422, longitude: -1.5027245 }}
+            icon={mapPins.stagePin}
+            anchor={{ x: 0.5, y: 0.5 }}
+          />
+          <Marker
+            coordinate={{ latitude: 53.8368202, longitude: -1.5012567 }}
+            icon={mapPins.stageTwoPin}
+            anchor={{ x: 0.5, y: 0.5 }}
+          />
+          {/* TENT STAGE */}
+          <Marker
+            coordinate={{ latitude: 53.8361067, longitude: -1.5031648 }}
+            icon={mapPins.tentStagePin}
+            anchor={{ x: 0.5, y: 0.5 }}
+          />
+          {/* NIGHT ENTERTAINMENT STAGE */}
+          <Marker
+            coordinate={{ latitude: 53.8371708, longitude: -1.4993836 }}
+            icon={mapPins.tentStagePin}
+            anchor={{ x: 0.5, y: 0.5 }}
           />
         </View>
 
