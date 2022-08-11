@@ -14,8 +14,8 @@ export default function PhotoUpload() {
     (async () => {
       if (Platform.OS !== "web") {
         const { status } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-        setHasPermission(status === "granted")
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        setHasPermission(status === "granted");
         if (status !== "granted") {
           Alert.alert(
             "sorry, we need camera roll permissions to make this work!"
@@ -33,15 +33,19 @@ export default function PhotoUpload() {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.cancelled) {
+      setImage(result.uri);
+    }
+  };
+
+  const uploadImage = async () => {
+    if (image) {
       // storage itself
       const storage = getStorage();
       //how the image will be addressed inside the storage
       const imageRef = ref(storage, "image.jpg");
       //convert image to array of bytes
-      const img = await fetch(result.uri);
+      const img = await fetch(image);
       const bytes = await img.blob();
       //upload images
       await uploadBytes(imageRef, bytes);
@@ -53,8 +57,12 @@ export default function PhotoUpload() {
       {image && (
         <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
       )}
-      <Button title="Select Photo" onPress={pickImage} disabled={!hasPermission}/>
-      {/* <Button title="Upload Photo" onPress={uploadImage} /> */}
+      <Button
+        title="Select Photo"
+        onPress={pickImage}
+        disabled={!hasPermission}
+      />
+      <Button title="Upload Photo" onPress={uploadImage} />
     </View>
   );
 }
