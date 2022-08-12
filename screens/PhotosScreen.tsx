@@ -50,9 +50,24 @@ export default function PhotosScreen({ navigation }) {
           photos.map((photo) => {
             return (
               <>
-                <Image key={photo.imageId}
+                <Image
+                  key={photo.imageId}
                   source={{ uri: photo.imageUrl }}
                   style={{ width: "90%", height: 200 }}
+                />
+                <Button
+                  title="like"
+                  onPress={async () => {
+                    const washingtonRef = doc(
+                      db,
+                      "festivalImages",
+                      photo.imageId
+                    );
+
+                    await updateDoc(washingtonRef, {
+                      likes: increment(1),
+                    });
+                  }}
                 />
               </>
             );
