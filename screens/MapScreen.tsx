@@ -1,23 +1,21 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
+import { StyleSheet, Text, View, Dimensions } from "react-native";
 import MapView from "react-native-maps";
 import { Marker, Callout } from "react-native-maps";
 import Geojson from "react-native-geojson";
-import { StyleSheet, Text, View, Dimensions, Button } from "react-native";
 import * as Location from "expo-location";
-import { useState, useEffect } from "react";
-import { roundhay } from "../assets/polygons/Festival_Map";
 import { v4 as uuidv4 } from "uuid";
+import * as polys from "../assets/polygons/index";
+import * as builds from "../assets/buildings/index";
+import * as mapPins from "../assets/map-pins/index";
 
 export default function MapScreen() {
+  // look up typescript interface
   const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const testCoord = {
-    latitude: 53.8369815,
-    longitude: -1.4964706,
-    markerId: 1,
-  };
-  const [markers, setMarkers] = useState([testCoord]);
+  const [markers, setMarkers] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -26,7 +24,6 @@ export default function MapScreen() {
         setErrorMsg("Permission to access location was denied");
         return;
       }
-
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
     })();
@@ -46,7 +43,6 @@ export default function MapScreen() {
       markerId: uuidv4(),
     };
     setMarkers([...markers, newMarker]);
-    console.log(markers, "<<< handleMarker");
   }
 
   function deleteMarker(markerId) {
@@ -54,13 +50,13 @@ export default function MapScreen() {
       return marker.markerId !== markerId;
     });
     setMarkers(updatedMarkers);
-    console.log(updatedMarkers, "<<< deleteMarker");
   }
 
   return (
     <View style={styles.container}>
       <MapView
         style={styles.map}
+        customMapStyle={mapStyle}
         provider={"google"}
         mapType={"standard"}
         showsCompass={true}
@@ -72,11 +68,162 @@ export default function MapScreen() {
           longitudeDelta: 0.0,
         }}
         onLongPress={(event) => {
-          console.log(event.nativeEvent);
           handleMarker(event);
         }}
       >
-        <Geojson geojson={roundhay} />
+        {/* GEOJSON MAP BOUNDARY BASE LAYER */}
+        <View>
+          <Geojson
+            geojson={builds.festivalBoundary}
+            fillColor="rgba(100, 10, 0, 0.3)"
+          />
+        </View>
+
+        {/* GEOJSON MAP OVERLAYS */}
+        <View>
+          <Geojson
+            geojson={polys.mainParking}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.accessPath}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.accessPath2}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.campingArea}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.dropOff}
+            fillColor="rgba(130, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.dropOff2}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.mainAreaOne}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.mainCamping}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.mainParking}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.mainRoad}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.mainRoad2}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.mainStages}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.nightEntertainment}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.staffCamping}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.staffEntrance}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.staffParking}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.vendorsArea}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.vendorArea2}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.vipCamping}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+          <Geojson
+            geojson={polys.westRoad}
+            fillColor="rgba(42, 30, 190, 0.5)"
+          />
+        </View>
+
+        {/* GEOJSON MAP BUILDINGS */}
+        <View>
+          <Geojson
+            geojson={builds.festivalFood}
+            fillColor="rgba(100, 10, 0, 0.4)"
+          />
+          <Geojson
+            geojson={builds.festivalInfoTickets}
+            fillColor="rgba(100, 10, 0, 0.4)"
+          />
+          <Geojson
+            geojson={builds.festivalMedical}
+            fillColor="rgba(100, 10, 0, 0.4)"
+          />
+          <Geojson
+            geojson={builds.festivalStages}
+            fillColor="rgba(100, 10, 0, 0.4)"
+          />
+          <Geojson
+            geojson={builds.festivalToilets}
+            fillColor="rgba(100, 10, 0, 0.4)"
+          />
+          <Geojson
+            geojson={builds.festivalVendors}
+            fillColor="rgba(100, 10, 0, 0.4)"
+          />
+        </View>
+
+        {/* TEST MARKER WITH ICONS */}
+        <Marker
+          coordinate={{ latitude: 53.8406639, longitude: -1.4915975 }}
+          icon={mapPins.yellowTentPin}
+          anchor={{ x: 0.5, y: 0.5 }}
+        />
+
+        {/* FESTIVAL MARKER LOCATIONS */}
+        <View>
+          <Marker
+            coordinate={{ latitude: 53.8330422, longitude: -1.5027245 }}
+            icon={mapPins.stagePin}
+            anchor={{ x: 0.5, y: 0.5 }}
+          />
+          <Marker
+            coordinate={{ latitude: 53.8368202, longitude: -1.5012567 }}
+            icon={mapPins.stageTwoPin}
+            anchor={{ x: 0.5, y: 0.5 }}
+          />
+          {/* TENT STAGE */}
+          <Marker
+            coordinate={{ latitude: 53.8361067, longitude: -1.5031648 }}
+            icon={mapPins.tentStagePin}
+            anchor={{ x: 0.5, y: 0.5 }}
+          />
+          {/* NIGHT ENTERTAINMENT STAGE */}
+          <Marker
+            coordinate={{ latitude: 53.8371708, longitude: -1.4993836 }}
+            icon={mapPins.tentStagePin}
+            anchor={{ x: 0.5, y: 0.5 }}
+          />
+        </View>
+
         <View>
           {markers.map((mark) => {
             return (
@@ -115,3 +262,30 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").height / 1.1,
   },
 });
+
+const mapStyle = [
+  {
+    elementType: "labels",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+  {
+    featureType: "administrative.land_parcel",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+  {
+    featureType: "administrative.neighborhood",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+];
