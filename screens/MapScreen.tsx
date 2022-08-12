@@ -99,7 +99,7 @@ export default function MapScreen({ navigation }) {
     <View style={styles.container}>
       <MapView
         style={styles.map}
-        customMapStyle={mapStyle}
+        customMapStyle={mapStyle} // toggle as it may make the basemap not work
         provider={"google"}
         mapType={"standard"}
         showsCompass={true}
