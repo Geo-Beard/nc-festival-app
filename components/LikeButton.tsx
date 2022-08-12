@@ -20,7 +20,7 @@ export default function LikeButton({ photoId }: photosProp) {
   //currentUser
   const auth = getAuth();
   const user = auth.currentUser;
-  const [likeCount, setLikeCount] = useState<number | null>(null);
+  const [likeCount, setLikeCount] = useState<number>(0);
   const [isClicked, setIsClicked] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -37,6 +37,7 @@ export default function LikeButton({ photoId }: photosProp) {
 
   const handleLike = async () => {
     try {
+      setIsClicked(!isClicked);
       const imageDocRef = doc(db, "festivalImages", photoId);
       const docSnap = await getDoc(imageDocRef);
       const likedByUser = docSnap.data()?.likedByUsers.includes(user?.uid);
@@ -47,23 +48,27 @@ export default function LikeButton({ photoId }: photosProp) {
           likes: increment(likeIncrement),
           likedByUsers: arrayRemove(user?.uid),
         });
-        setLikeCount(likeCount && likeCount - 1);
+        setLikeCount(likeCount - 1);
       }
       if (!likedByUser && imageDocRef) {
         await updateDoc(imageDocRef, {
           likes: increment(likeIncrement),
           likedByUsers: arrayUnion(user?.uid),
         });
-        setLikeCount(likeCount && likeCount + 1);
+        setLikeCount(likeCount + 1);
       }
     } catch (e) {
+      setIsClicked(!isClicked);
       //error occurs when navigating to photos with an already logged in user on initial app load. Navigating away and back to the photos page sorts the issue. But should check this out when we have time
       console.log("error----->", e);
     }
   };
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={!isClicked ? styles.buttonLike : styles.buttonUnlike} onPress={handleLike}>
+      <TouchableOpacity
+        style={!isClicked ? styles.buttonLike : styles.buttonUnlike}
+        onPress={handleLike}
+      >
         <Text>
           {!isClicked ? "Like" : "Liked"} {`| ${likeCount}`}
         </Text>
@@ -82,7 +87,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#a2d2ff",
     padding: 10,
-    borderRadius:100,
+    borderRadius: 100,
     height: 40,
     width: 100,
   },
@@ -90,7 +95,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#57cc99",
     padding: 10,
-    borderRadius:100,
+    borderRadius: 100,
     height: 40,
     width: 100,
   },
