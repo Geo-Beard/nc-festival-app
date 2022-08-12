@@ -15,8 +15,8 @@ export default function PhotosScreen({ navigation }) {
     setIsLoading(false);
     querySnapshot.forEach((doc) => {
       photoArray.push(doc.data());
-      setPhotos([...photoArray]);
     });
+    setPhotos([...photoArray]);
   };
 
   useEffect(() => {
