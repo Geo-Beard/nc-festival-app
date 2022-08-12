@@ -14,6 +14,9 @@ import {
   DocumentData,
   getDocs,
   Timestamp,
+  doc,
+  updateDoc,
+  increment,
 } from "firebase/firestore";
 
 export default function PhotosScreen({ navigation }) {
@@ -46,10 +49,12 @@ export default function PhotosScreen({ navigation }) {
           photos &&
           photos.map((photo) => {
             return (
-              <Image
-                source={{ uri: photo.imageUrl }}
-                style={{ width: "90%", height: 200 }}
-              />
+              <>
+                <Image key={photo.imageId}
+                  source={{ uri: photo.imageUrl }}
+                  style={{ width: "90%", height: 200 }}
+                />
+              </>
             );
           })}
       </ScrollView>
