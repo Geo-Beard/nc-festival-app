@@ -10,7 +10,7 @@ export default function SinglePhoto({ photo }: DocumentData) {
         style={{ width: "90%", height: 200 }}
         key={photo.imageId}
       />
-      <LikeButton photoId={photo.imageId} />
+      <LikeButton photoId={photo.imageId}/>
     </>
   );
 }

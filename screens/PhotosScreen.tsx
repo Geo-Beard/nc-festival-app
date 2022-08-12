@@ -1,15 +1,8 @@
 import { useEffect, useState } from "react";
-import {
-  Button,
-  ScrollView,
-} from "react-native";
+import { Button, ScrollView } from "react-native";
 //retrieve data
 import { db } from "../firebase-config/firebase-config";
-import {
-  collection,
-  DocumentData,
-  getDocs,
-} from "firebase/firestore";
+import { collection, DocumentData, getDocs } from "firebase/firestore";
 import SinglePhoto from "../components/SinglePhoto";
 
 export default function PhotosScreen({ navigation }) {
