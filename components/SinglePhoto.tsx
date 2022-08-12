@@ -1,16 +1,6 @@
-
-import {
-  Button,
-  Image,
-} from "react-native";
-//retrieve data
-import { db } from "../firebase-config/firebase-config";
-import {
-  DocumentData,
-  doc,
-  updateDoc,
-  increment,
-} from "firebase/firestore";
+import { Image } from "react-native";
+import { DocumentData } from "firebase/firestore";
+import LikeButton from "./LikeButton";
 
 export default function SinglePhoto({ photo }: DocumentData) {
   return (
@@ -20,16 +10,7 @@ export default function SinglePhoto({ photo }: DocumentData) {
         style={{ width: "90%", height: 200 }}
         key={photo.imageId}
       />
-      <Button
-        title="like"
-        onPress={async () => {
-          const washingtonRef = doc(db, "festivalImages", photo.imageId);
-
-          await updateDoc(washingtonRef, {
-            likes: increment(1),
-          });
-        }}
-      />
+      <LikeButton photoId={photo.imageId} />
     </>
   );
 }
