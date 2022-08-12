@@ -208,5 +208,215 @@
     "time": 2200,
     "stage": 3,
     "image": "https://images.unsplash.com/photo-1509143382-48811e579888?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1638&q=80"
+  },
+  "41": {
+    "name": "Jaded Eyes",
+    "day": "Saturday",
+    "time": 1300,
+    "stage": "Main",
+    "image": "https://images.unsplash.com/photo-1506091403742-e3aa39518db5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "42": {
+    "name": "",
+    "day": "Saturday",
+    "time": 1400,
+    "stage": "Main",
+    "image": "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "43": {
+    "name": "Tiny Planets",
+    "day": "Saturday",
+    "time": 1500,
+    "stage": "Main",
+    "image": "https://images.unsplash.com/photo-1506157786151-b8491531f063?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "44": {
+    "name": "Last Call",
+    "day": "Saturday",
+    "time": 1600,
+    "stage": "Main",
+    "image": "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "45": {
+    "name": "Lost Meridian",
+    "day": "Saturday",
+    "time": 1700,
+    "stage": "Main",
+    "image": "https://images.unsplash.com/photo-1454908027598-28c44b1716c1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "46": {
+    "name": "Four Quarters",
+    "day": "Saturday",
+    "time": 1800,
+    "stage": "Main",
+    "image": "https://images.unsplash.com/photo-1521547418549-6a31aad7c177?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "47": {
+    "name": "The Dirty Faces",
+    "day": "Saturday",
+    "time": 1900,
+    "stage": "Main",
+    "image": "https://images.unsplash.com/photo-1472653816316-3ad6f10a6592?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1469&q=80"
+  },
+  "48": {
+    "name": "Super Luxury",
+    "day": "Saturday",
+    "time": 2000,
+    "stage": "Main",
+    "image": "https://images.unsplash.com/photo-1582711012124-a56cf82307a0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1840&q=80"
+  },
+  "49": {
+    "name": "Plastic Rabbits",
+    "day": "Saturday",
+    "time": 2100,
+    "stage": "Main",
+    "image": "https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "50": {
+    "name": "Wolf Alice",
+    "day": "Saturday",
+    "time": 2200,
+    "stage": "Main",
+    "image": "https://images.unsplash.com/photo-1573055418049-c8e0b7e3403b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "51": {
+    "name": "Fontaines D.C.",
+    "day": "Saturday",
+    "time": 1300,
+    "stage": "Tent",
+    "image": "https://images.unsplash.com/photo-1547525372-7acfcbcd8acc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "52": {
+    "name": "Bad Boy Chiller Crew",
+    "day": "Saturday",
+    "time": 1400,
+    "stage": "Tent",
+    "image": "https://images.unsplash.com/photo-1619229667009-e7e51684e8e6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "53": {
+    "name": "Tame Impala",
+    "day": "Saturday",
+    "time": 1500,
+    "stage": "Tent",
+    "image": "https://images.unsplash.com/photo-1603228254119-e6a4d095dc59?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80"
+  },
+  "54": {
+    "name": "The Mouse Outfit",
+    "day": "Saturday",
+    "time": 1600,
+    "stage": "Tent",
+    "image": "https://images.unsplash.com/photo-1595239094789-4e00e532528a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "55": {
+    "name": "Lost Meridian",
+    "day": "Saturday",
+    "time": 1700,
+    "stage": "Tent",
+    "image": "https://images.unsplash.com/photo-1454908027598-28c44b1716c1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "56": {
+    "name": "Khruangbin",
+    "day": "Saturday",
+    "time": 1800,
+    "stage": "Tent",
+    "image": "https://images.unsplash.com/photo-1534327737286-52d27a912124?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80"
+  },
+  "57": {
+    "name": "Too Many Zooz",
+    "day": "Saturday",
+    "time": 1900,
+    "stage": "Tent",
+    "image": "https://images.unsplash.com/photo-1473396413399-6717ef7c4093?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "58": {
+    "name": "Foals",
+    "day": "Saturday",
+    "time": 2000,
+    "stage": "Tent",
+    "image": "https://images.unsplash.com/photo-1582711012124-a56cf82307a0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1840&q=80"
+  },
+  "59": {
+    "name": "The Libertines",
+    "day": "Saturday",
+    "time": 2100,
+    "stage": "Tent",
+    "image": "https://images.unsplash.com/photo-1515175192010-cf3250992719?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1932&q=80"
+  },
+  "60": {
+    "name": "Arctic Monkeys",
+    "day": "Saturday",
+    "time": 2200,
+    "stage": "Tent",
+    "image": "https://images.unsplash.com/photo-1578021127722-1f1ff95b429e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "61": {
+    "name": "Idles",
+    "day": "Saturday",
+    "time": 1300,
+    "stage": "Local",
+    "image": "https://images.unsplash.com/photo-1520242739010-44e95bde329e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "62": {
+    "name": "Hak Baker",
+    "day": "Saturday",
+    "time": 1400,
+    "stage": "Local",
+    "image": "https://images.unsplash.com/photo-1585279222876-17a681486ded?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1931&q=80"
+  },
+  "63": {
+    "name": "Lianne La Havas",
+    "day": "Saturday",
+    "time": 1500,
+    "stage": "Local",
+    "image": "https://images.unsplash.com/photo-1566150951155-4a59643d8a9f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "64": {
+    "name": "Skunk Anansie",
+    "day": "Saturday",
+    "time": 1600,
+    "stage": "Local",
+    "image": "https://images.unsplash.com/photo-1575672913784-11a7cd4f25f4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1469&q=80"
+  },
+  "65": {
+    "name": "Metronomy",
+    "day": "Saturday",
+    "time": 1700,
+    "stage": "Local",
+    "image": "https://images.unsplash.com/photo-1598214015728-bc73871186d8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1476&q=80"
+  },
+  "66": {
+    "name": "Haim",
+    "day": "Saturday",
+    "time": 1800,
+    "stage": "Local",
+    "image": "https://images.unsplash.com/photo-1542813884-edb2d564ca91?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "67": {
+    "name": "Hobbies",
+    "day": "Saturday",
+    "time": 1900,
+    "stage": "Local",
+    "image": "https://images.unsplash.com/photo-1553695750-ad0b596c4f80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1914&q=80"
+  },
+  "68": {
+    "name": "Trizzy 5star",
+    "day": "Saturday",
+    "time": 2000,
+    "stage": "Local",
+    "image": "https://images.unsplash.com/photo-1508973379184-7517410fb0bc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "69": {
+    "name": "Pigeon Detectives",
+    "day": "Saturday",
+    "time": 2100,
+    "stage": "Local",
+    "image": "https://images.unsplash.com/photo-1614584120612-a7c9c244aacb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+  },
+  "70": {
+    "name": "Kaiser Chiefs",
+    "day": "Saturday",
+    "time": 2200,
+    "stage": "Local",
+    "image": "https://images.unsplash.com/photo-1526478806334-5fd488fcaabc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1516&q=80"
   }
 }
