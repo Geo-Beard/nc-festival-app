@@ -9,20 +9,22 @@ interface photosProp {
 }
 
 export default function LikeButton({ photoId }: photosProp) {
-    //currentUser
-    const auth = getAuth();
-    const user = auth.currentUser;
-  return (
-    <Button
-      title="like"
-      onPress={async () => {
-        const imageDocRef = doc(db, "festivalImages", photoId);
+  //currentUser
+  const auth = getAuth();
+  const user = auth.currentUser;
 
-        await updateDoc(imageDocRef, {
-          likes: increment(1),
-          likedByUsers: arrayUnion(user?.uid),
-        });
-      }}
-    />
-  );
+  const handleLike = async () => {
+    try {
+      const imageDocRef = doc(db, "festivalImages", photoId);
+
+      await updateDoc(imageDocRef, {
+        likes: increment(1),
+        likedByUsers: arrayUnion(user?.uid),
+      });
+    } catch (e) {
+      //error occurs when navigating to photos with an already logged in user on initial app load. Navigating away and back to the photos page sorts the issue. But should check this out when we have time
+      console.log("error----->", e);
+    }
+  };
+  return <Button title="like" onPress={handleLike} />;
 }
