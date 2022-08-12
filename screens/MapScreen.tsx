@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Dimensions } from "react-native";
-import MapView from "react-native-maps";
+import { StyleSheet, Text, View, Dimensions, Button } from "react-native";
+import MapView, { Polyline } from "react-native-maps";
 import { Marker, Callout } from "react-native-maps";
 import Geojson from "react-native-geojson";
 import * as Location from "expo-location";
@@ -9,14 +9,29 @@ import { v4 as uuidv4 } from "uuid";
 import * as polys from "../assets/polygons/index";
 import * as builds from "../assets/buildings/index";
 import * as mapPins from "../assets/map-pins/index";
+import {
+  collection,
+  doc,
+  getDocs,
+  setDoc,
+  query,
+  where,
+  deleteDoc,
+} from "firebase/firestore";
+import { db } from "../firebase-config/firebase-config";
+import { getAuth } from "firebase/auth";
 
-export default function MapScreen() {
-  // look up typescript interface
+export default function MapScreen({ navigation }) {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const [userMarkers, setUserMarkers] = useState(null);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [markerPlaced, setMarkerPlaced] = useState(false);
+  const [markerDeleted, setMarkerDeleted] = useState(false);
+  const [routePolyline, setRoutePolyline] = useState(null);
 
-  const [markers, setMarkers] = useState([]);
-
+  //User authentication for using geolocation
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -35,21 +50,49 @@ export default function MapScreen() {
   } else if (location) {
     text = JSON.stringify(location);
   }
+  
+
+  //CRUD methods for firestore
+  //READ
+  async function ReadMarker() {
+    const markerRef = collection(db, "userMarkers");
+    const q = query(markerRef, where("userId", "==", `${user?.uid}`));
+    const allUserMarkers = await getDocs(q);
+    const markerArray = [];
+    allUserMarkers.forEach((userMarker) => {
+      markerArray.push(userMarker.data());
+    });
+    setUserMarkers([...markerArray]);
+  }
+
+  useEffect(() => {
+    ReadMarker();
+    setMarkerPlaced(false);
+    setMarkerDeleted(false);
+  }, [markerPlaced, markerDeleted]);
+
+  //CREATE
+  function CreateMarker(newMarker) {
+    const createMarker = doc(db, "userMarkers", `${newMarker.markerId}`);
+    setDoc(createMarker, newMarker);
+    setMarkerPlaced(true);
+  }
 
   function handleMarker(event) {
     const newMarker = {
       latitude: event.nativeEvent.coordinate.latitude,
       longitude: event.nativeEvent.coordinate.longitude,
       markerId: uuidv4(),
+      userId: user?.uid,
     };
-    setMarkers([...markers, newMarker]);
+    CreateMarker(newMarker);
   }
 
-  function deleteMarker(markerId) {
-    const updatedMarkers = markers.filter((marker) => {
-      return marker.markerId !== markerId;
-    });
-    setMarkers(updatedMarkers);
+  //DELETE
+  async function DeleteMarker(markerId) {
+    const markerRef = doc(db, "userMarkers", `${markerId}`);
+    await deleteDoc(markerRef);
+    setMarkerDeleted(true);
   }
 
   return (
@@ -191,13 +234,6 @@ export default function MapScreen() {
           />
         </View>
 
-        {/* TEST MARKER WITH ICONS */}
-        <Marker
-          coordinate={{ latitude: 53.8406639, longitude: -1.4915975 }}
-          icon={mapPins.yellowTentPin}
-          anchor={{ x: 0.5, y: 0.5 }}
-        />
-
         {/* FESTIVAL MARKER LOCATIONS */}
         <View>
           <Marker
@@ -224,27 +260,51 @@ export default function MapScreen() {
           />
         </View>
 
+        {/* POLYLINE TEST */}
         <View>
-          {markers.map((mark) => {
-            return (
-              <Marker
-                key={mark.markerId}
-                coordinate={{
-                  latitude: mark.latitude,
-                  longitude: mark.longitude,
-                }}
-              >
-                <Callout
-                  onPress={() => {
-                    deleteMarker(mark.markerId);
-                  }}
-                >
-                  <Text>Delete Marker</Text>
-                </Callout>
-              </Marker>
-            );
-          })}
+          <Polyline
+            coordinates={[
+              { latitude: 53.8362441, longitude: -1.5009048 },
+              { latitude: 53.8341043, longitude: -1.5022191 },
+            ]}
+          />
+          {location !== null &&<Polyline
+            coordinates={[
+              {
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+              },
+              { latitude: 53.8341043, longitude: -1.5022191 },
+            ]}
+          />}
         </View>
+
+        {/* USER MARKERS */}
+        {userMarkers !== null && (
+          <View>
+            {userMarkers.map((mark) => {
+              return (
+                <Marker
+                  key={mark.markerId}
+                  coordinate={{
+                    latitude: mark.latitude,
+                    longitude: mark.longitude,
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  icon={mapPins.yellowTentPin}
+                >
+                  <Callout
+                    onPress={() => {
+                      DeleteMarker(mark.markerId);
+                    }}
+                  >
+                    <Text>Delete Marker</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
       </MapView>
     </View>
   );
