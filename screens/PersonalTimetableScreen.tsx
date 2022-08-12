@@ -61,7 +61,7 @@ export default function PersonalTimetableScreen() {
       {userTimetable.length !== 0 &&
         userTimetable.map((artist) => {
           return (
-            <Card>
+            <Card key={artist.name + Math.random()}>
               <Card.Content>
                 <Title>{artist.name}</Title>
                 <Paragraph>{`${artist.day} ${artist.time}`} </Paragraph>

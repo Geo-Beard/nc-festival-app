@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text } from "react-native";
+import { Pressable, StyleSheet, Text, Alert } from "react-native";
 import { useState } from "react";
 
 export default function AddEventButton({
@@ -6,18 +6,25 @@ export default function AddEventButton({
   userTimetable,
   setUserTimetable,
 }) {
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [isAdded, setIsAdded] = useState(false);
   return (
-    <Pressable
-      style={[styles.button, styles.buttonClose]}
-      onPress={() => {
-        if (!userTimetable.includes(artist)) {
-          setUserTimetable([...userTimetable, artist]);
-        }
-      }}
-    >
-      <Text style={styles.textStyle}>Add</Text>
-    </Pressable>
+    <>
+      {isAdded ? (
+        <Text>Event added to your timetable</Text>
+      ) : (
+        <Pressable
+          style={[styles.button, styles.buttonClose]}
+          onPress={() => {
+            if (!userTimetable.includes(artist)) {
+              setUserTimetable([...userTimetable, artist]);
+              setIsAdded(true);
+            }
+          }}
+        >
+          <Text style={styles.textStyle}>Add</Text>
+        </Pressable>
+      )}
+    </>
   );
 }
 
