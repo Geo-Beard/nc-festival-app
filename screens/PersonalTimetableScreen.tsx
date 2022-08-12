@@ -1,5 +1,5 @@
 import {View, ScrollView, Text, Pressable, Modal, Alert, StyleSheet, SectionList, StatusBar} from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { db } from '../firebase-config/firebase-config';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { getAuth } from "firebase/auth";
@@ -8,6 +8,7 @@ export default function PersonalTimetableScreen () {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [userTimetable, setUserTimetable] = useState([]);
+    const [userDoc, setUserDoc] = useState(null);
     const auth = getAuth();
     const userID = auth.currentUser ? auth.currentUser.uid : null;
 
@@ -23,6 +24,19 @@ export default function PersonalTimetableScreen () {
             })
       }
     }
+
+    function Read() {
+      const myDoc = doc(db, "events", "artists");
+      getDoc(myDoc).then((snapshot) => {
+        if (snapshot) {
+          setUserDoc(snapshot.data());
+        }
+      });
+    }
+
+    useEffect(() => {
+      Read();
+    }, []);
 
     const DATA = [
         {
