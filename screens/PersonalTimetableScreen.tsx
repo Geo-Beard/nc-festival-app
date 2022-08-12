@@ -14,11 +14,13 @@ import { db } from "../firebase-config/firebase-config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { Card, Title, Paragraph } from "react-native-paper";
+import AddEventButton from "../components/AddEventButton";
 
 export default function PersonalTimetableScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [userTimetable, setUserTimetable] = useState([]);
   const [userDoc, setUserDoc] = useState(null);
+  const [isDisabled, setIsDisabled] = useState(false);
   const auth = getAuth();
   const userID = auth.currentUser ? auth.currentUser.uid : null;
 
@@ -110,16 +112,14 @@ export default function PersonalTimetableScreen() {
                           <Paragraph>{`${artist.stage} stage`} </Paragraph>
                         </Card.Content>
                         <Card.Cover source={{ uri: artist.image }} />
-                        <Pressable
+                        <AddEventButton
                           style={[styles.button, styles.buttonClose]}
-                          onPress={() => {
-                            if (!userTimetable.includes(artist)) {
-                              setUserTimetable([...userTimetable, artist]);
-                            }
-                          }}
+                          artist={artist}
+                          userTimetable={userTimetable}
+                          setUserTimetable={setUserTimetable}
                         >
                           <Text style={styles.textStyle}>Add</Text>
-                        </Pressable>
+                        </AddEventButton>
                       </Card>
                     );
                   })}
