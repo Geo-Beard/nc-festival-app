@@ -1,7 +1,11 @@
 import { Button } from "react-native";
 //retrieve data
 import { db } from "../firebase-config/firebase-config";
-import { doc, updateDoc, increment } from "firebase/firestore";
+import { doc, updateDoc, increment, arrayUnion } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+//currentUser
+const auth = getAuth();
+const user = auth.currentUser;
 
 interface photosProp {
   photoId: string;
@@ -16,6 +20,7 @@ export default function LikeButton({ photoId }: photosProp) {
 
         await updateDoc(imageDocRef, {
           likes: increment(1),
+          likedByUsers: arrayUnion(user?.uid)
         });
       }}
     />

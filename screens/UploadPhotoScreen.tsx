@@ -8,8 +8,6 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 //create image database
 import {
-  collection,
-  addDoc,
   serverTimestamp,
   doc,
   setDoc,
@@ -77,6 +75,7 @@ export default function UploadPhotoScreen() {
           likes: 0,
           userId: user?.uid,
           imageId: uuid,
+          likedByUsers: [],
         });
         setIsUploaded(true);
       } catch (e) {
