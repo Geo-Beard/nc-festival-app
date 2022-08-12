@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-  StyleSheet,
-  Text,
-  View,
   Button,
-  Image,
   ScrollView,
 } from "react-native";
 //retrieve data
@@ -13,11 +9,8 @@ import {
   collection,
   DocumentData,
   getDocs,
-  Timestamp,
-  doc,
-  updateDoc,
-  increment,
 } from "firebase/firestore";
+import SinglePhoto from "../components/SinglePhoto";
 
 export default function PhotosScreen({ navigation }) {
   const [photos, setPhotos] = useState<DocumentData | null>(null);
@@ -47,30 +40,8 @@ export default function PhotosScreen({ navigation }) {
       <ScrollView>
         {!isLoading &&
           photos &&
-          photos.map((photo) => {
-            return (
-              <>
-                <Image
-                  key={photo.imageId}
-                  source={{ uri: photo.imageUrl }}
-                  style={{ width: "90%", height: 200 }}
-                />
-                <Button
-                  title="like"
-                  onPress={async () => {
-                    const washingtonRef = doc(
-                      db,
-                      "festivalImages",
-                      photo.imageId
-                    );
-
-                    await updateDoc(washingtonRef, {
-                      likes: increment(1),
-                    });
-                  }}
-                />
-              </>
-            );
+          photos.map((photo: DocumentData) => {
+            return <SinglePhoto photo={photo} />;
           })}
       </ScrollView>
     </>
