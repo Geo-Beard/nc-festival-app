@@ -66,7 +66,16 @@ export default function PersonalTimetableScreen() {
                 <Paragraph>{`${artist.stage} stage`} </Paragraph>
               </Card.Content>
               <Card.Cover source={{ uri: artist.image }} />
-              <Pressable style={[styles.button, styles.buttonClose]}>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => {
+                  const indexOfArtist = userTimetable.indexOf(artist);
+                  userTimetable.splice(indexOfArtist, 1);
+                  const updatedTimetable = [...userTimetable];
+                  setUserTimetable(updatedTimetable);
+                  Create();
+                }}
+              >
                 <Text style={styles.textStyle}>Remove</Text>
               </Pressable>
             </Card>
@@ -134,7 +143,6 @@ export default function PersonalTimetableScreen() {
           style={[styles.button, styles.buttonOpen]}
           onPress={() => {
             setModalVisible(true);
-            console.log(userTimetable);
           }}
         >
           <Text style={styles.textStyle}>Add events</Text>
