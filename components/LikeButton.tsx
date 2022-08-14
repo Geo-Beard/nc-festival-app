@@ -15,9 +15,14 @@ import { useState } from "react";
 interface propsInterface {
   photo: DocumentData;
   userId: string;
+  matchingId: boolean;
 }
 
-export default function LikeButton({ photo, userId }: propsInterface) {
+export default function LikeButton({
+  photo,
+  userId,
+  matchingId,
+}: propsInterface) {
   //states
   const [likeCount, setLikeCount] = useState<number>(photo.likes);
   const [isLiked, setIsLiked] = useState<boolean>(
@@ -54,10 +59,17 @@ export default function LikeButton({ photo, userId }: propsInterface) {
       console.log("error----->", e);
     }
   };
+
+  const bgColor = !isLiked ? "#a2d2ff" : "#57cc99";
+  const border = !matchingId ? 25 : 0;
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        style={!isLiked ? styles.buttonLike : styles.buttonUnlike}
+        style={[
+          styles.likeButton,
+          { backgroundColor: bgColor, borderBottomLeftRadius: border },
+        ]}
         onPress={handleLike}
       >
         <Text>
@@ -72,22 +84,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 10,
   },
-  buttonLike: {
+  likeButton: {
     alignItems: "center",
-    backgroundColor: "#a2d2ff",
     padding: 10,
-    borderRadius: 100,
     height: 40,
-    width: 100,
-  },
-  buttonUnlike: {
-    alignItems: "center",
-    backgroundColor: "#57cc99",
-    padding: 10,
-    borderRadius: 100,
-    height: 40,
-    width: 100,
+    borderBottomRightRadius: 25,
   },
 });

@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { Button, ScrollView } from "react-native";
+import { Button, ScrollView, View, StyleSheet } from "react-native";
 //retrieve data
 import { db } from "../firebase-config/firebase-config";
 import { collection, DocumentData, getDocs } from "firebase/firestore";
-import SinglePhoto from "../components/SinglePhoto";
 import { getAuth } from "firebase/auth";
+//components
+import SinglePhoto from "../components/SinglePhoto";
 
-export default function PhotosScreen({ navigation }) {
+export default function PhotosScreen({ navigation }: any) {
   const auth = getAuth();
   const user = auth.currentUser;
 
@@ -15,7 +16,7 @@ export default function PhotosScreen({ navigation }) {
 
   const retrievedDocuments = async () => {
     const querySnapshot = await getDocs(collection(db, "festivalImages"));
-    const photoArray = [];
+    const photoArray: any = [];
     setIsLoading(false);
     querySnapshot.forEach((doc) => {
       photoArray.push(doc.data());
@@ -34,13 +35,29 @@ export default function PhotosScreen({ navigation }) {
         onPress={() => navigation.navigate("UploadPhoto")}
         title="Upload photo"
       />
-      <ScrollView>
-        {!isLoading &&
-          photos && user &&
-          photos.map((photo: DocumentData) => {
-            return <SinglePhoto key={photo.imageId}photo={photo} userId={user.uid}/>;
-          })}
-      </ScrollView>
+        <ScrollView>
+      <View style={styles.container}>
+          {!isLoading &&
+            photos &&
+            user &&
+            photos.map((photo: DocumentData) => {
+              return (
+                <SinglePhoto
+                  key={photo.imageId}
+                  photo={photo}
+                  userId={user.uid}
+                />
+              );
+            })}
+      </View>
+        </ScrollView>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    justifyContent: "center",
+    alignItems: "center",
+  }
+});
