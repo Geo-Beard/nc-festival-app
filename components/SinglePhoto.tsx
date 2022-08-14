@@ -2,7 +2,12 @@ import { Image } from "react-native";
 import { DocumentData } from "firebase/firestore";
 import LikeButton from "./LikeButton";
 
-export default function SinglePhoto({ photo }: DocumentData) {
+interface propsInterface {
+  photo: DocumentData;
+  userId: string;
+}
+
+export default function SinglePhoto({ photo, userId }: propsInterface) {
   return (
     <>
       <Image
@@ -10,7 +15,7 @@ export default function SinglePhoto({ photo }: DocumentData) {
         style={{ width: "90%", height: 200 }}
         key={photo.imageId}
       />
-      <LikeButton photoId={photo.imageId}/>
+      <LikeButton photo={photo} userId={userId} />
     </>
   );
 }

@@ -4,8 +4,12 @@ import { Button, ScrollView } from "react-native";
 import { db } from "../firebase-config/firebase-config";
 import { collection, DocumentData, getDocs } from "firebase/firestore";
 import SinglePhoto from "../components/SinglePhoto";
+import { getAuth } from "firebase/auth";
 
 export default function PhotosScreen({ navigation }) {
+  const auth = getAuth();
+  const user = auth.currentUser;
+
   const [photos, setPhotos] = useState<DocumentData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -32,9 +36,9 @@ export default function PhotosScreen({ navigation }) {
       />
       <ScrollView>
         {!isLoading &&
-          photos &&
+          photos && user &&
           photos.map((photo: DocumentData) => {
-            return <SinglePhoto photo={photo} />;
+            return <SinglePhoto key={photo.imageId}photo={photo} userId={user.uid}/>;
           })}
       </ScrollView>
     </>
