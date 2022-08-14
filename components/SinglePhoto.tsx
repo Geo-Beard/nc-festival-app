@@ -1,6 +1,9 @@
 import { Image } from "react-native";
 import { DocumentData } from "firebase/firestore";
+import { useState } from "react";
+//components
 import LikeButton from "./LikeButton";
+import DeletePhoto from "../components/DeletePhoto";
 
 interface propsInterface {
   photo: DocumentData;
@@ -8,7 +11,8 @@ interface propsInterface {
 }
 
 export default function SinglePhoto({ photo, userId }: propsInterface) {
-  return (
+  const [isDeleted, setIsDeleted] = useState(false);
+  return !isDeleted ? (
     <>
       <Image
         source={{ uri: photo.imageUrl }}
@@ -16,6 +20,9 @@ export default function SinglePhoto({ photo, userId }: propsInterface) {
         key={photo.imageId}
       />
       <LikeButton photo={photo} userId={userId} />
+      <DeletePhoto photo={photo} setIsDeleted={setIsDeleted} />
     </>
+  ) : (
+    <></>
   );
 }
