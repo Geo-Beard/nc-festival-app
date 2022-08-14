@@ -6,7 +6,6 @@ import {
   Modal,
   Alert,
   StyleSheet,
-  SectionList,
   StatusBar,
 } from "react-native";
 import { useState, useEffect } from "react";
@@ -19,8 +18,8 @@ import AddEventButton from "../components/AddEventButton";
 export default function PersonalTimetableScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [userTimetable, setUserTimetable] = useState([]);
-  const [userDoc, setUserDoc] = useState(null);
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [allEvents, setAllEvents] = useState(null);
+  // const [myEvents, setMyEvents] = useState(null);
   const auth = getAuth();
   const userID = auth.currentUser ? auth.currentUser.uid : null;
 
@@ -36,20 +35,35 @@ export default function PersonalTimetableScreen() {
     }
   }
 
-  function Read() {
+  function ReadAllEvents() {
     const myDoc = doc(db, "events", "artists");
     getDoc(myDoc).then((snapshot) => {
       if (snapshot) {
-        setUserDoc(snapshot.data());
+        setAllEvents(snapshot.data());
       }
     });
   }
 
+  function ReadMyEvents() {
+    if (userID !== null) {
+      const myDoc = doc(db, "userTimetables", userID.toString());
+      getDoc(myDoc).then((snapshot) => {
+        if (snapshot) {
+          setUserTimetable(snapshot.data().timetable);
+        }
+      });
+    }
+  }
+
   useEffect(() => {
-    Read();
+    ReadAllEvents();
   }, []);
 
-  const dataArray = userDoc !== null ? Object.values(userDoc) : null;
+  useEffect(() => {
+    ReadMyEvents();
+  }, []);
+
+  const eventsArray = allEvents !== null ? Object.values(allEvents) : null;
 
   return (
     <ScrollView>
@@ -100,10 +114,10 @@ export default function PersonalTimetableScreen() {
                 Add artists to your timetable:
               </Text>
               <ScrollView style={styles.container}>
-                {dataArray !== null &&
-                  dataArray.map((artist) => {
+                {eventsArray !== null &&
+                  eventsArray.map((artist) => {
                     return (
-                      <Card>
+                      <Card key={artist.name + Math.random()}>
                         <Card.Content>
                           <Title>{artist.name}</Title>
                           <Paragraph>
