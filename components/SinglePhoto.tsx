@@ -12,6 +12,7 @@ interface propsInterface {
 
 export default function SinglePhoto({ photo, userId }: propsInterface) {
   const [isDeleted, setIsDeleted] = useState(false);
+  const matchingId = photo.userId === userId
   return !isDeleted ? (
     <>
       <Image
@@ -20,7 +21,7 @@ export default function SinglePhoto({ photo, userId }: propsInterface) {
         key={photo.imageId}
       />
       <LikeButton photo={photo} userId={userId} />
-      <DeletePhoto photo={photo} setIsDeleted={setIsDeleted} />
+      {matchingId && <DeletePhoto photo={photo} setIsDeleted={setIsDeleted} />}
     </>
   ) : (
     <></>
