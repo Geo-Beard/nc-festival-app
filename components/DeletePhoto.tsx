@@ -1,7 +1,9 @@
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
 import { db } from "../firebase-config/firebase-config";
-import { doc, updateDoc, deleteDoc, DocumentData } from "firebase/firestore";
-import { Dispatch, SetStateAction, useState } from "react";
+import { doc, deleteDoc, DocumentData } from "firebase/firestore";
+import { Dispatch, SetStateAction } from "react";
+//error notification
+import { showMessage } from "react-native-flash-message";
 
 interface propsInterface {
   photo: DocumentData;
@@ -10,8 +12,17 @@ interface propsInterface {
 
 export default function DeletePhoto({ photo, setIsDeleted }: propsInterface) {
   const handleDelete = async () => {
-    await deleteDoc(doc(db, "festivalImages", photo.imageId));
-    setIsDeleted(true);
+    try {
+      await deleteDoc(doc(db, "festivalImages", photo.imageId));
+      setIsDeleted(true);
+    } catch (e) {
+      setIsDeleted(false);
+      showMessage({
+        message:
+          "Photo could not be deleted at this time. Please refresh the page and try again.",
+        type: "warning",
+      });
+    }
   };
 
   return (
