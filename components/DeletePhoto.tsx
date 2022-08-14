@@ -37,14 +37,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 10,
   },
   button: {
     alignItems: "center",
     backgroundColor: "#ff477e",
     padding: 10,
-    borderRadius: 100,
+    borderBottomLeftRadius: 25,
     height: 40,
-    width: 100,
   },
 });

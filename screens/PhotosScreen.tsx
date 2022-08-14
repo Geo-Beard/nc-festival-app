@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, ScrollView } from "react-native";
+import { Button, ScrollView, View, StyleSheet } from "react-native";
 //retrieve data
 import { db } from "../firebase-config/firebase-config";
 import { collection, DocumentData, getDocs } from "firebase/firestore";
@@ -35,13 +35,29 @@ export default function PhotosScreen({ navigation }: any) {
         onPress={() => navigation.navigate("UploadPhoto")}
         title="Upload photo"
       />
-      <ScrollView>
-        {!isLoading &&
-          photos && user &&
-          photos.map((photo: DocumentData) => {
-            return <SinglePhoto key={photo.imageId}photo={photo} userId={user.uid}/>;
-          })}
-      </ScrollView>
+        <ScrollView>
+      <View style={styles.container}>
+          {!isLoading &&
+            photos &&
+            user &&
+            photos.map((photo: DocumentData) => {
+              return (
+                <SinglePhoto
+                  key={photo.imageId}
+                  photo={photo}
+                  userId={user.uid}
+                />
+              );
+            })}
+      </View>
+        </ScrollView>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    justifyContent: "center",
+    alignItems: "center",
+  }
+});
