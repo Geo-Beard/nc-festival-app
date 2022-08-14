@@ -19,7 +19,6 @@ export default function PersonalTimetableScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [userTimetable, setUserTimetable] = useState([]);
   const [allEvents, setAllEvents] = useState(null);
-  // const [myEvents, setMyEvents] = useState(null);
   const auth = getAuth();
   const userID = auth.currentUser ? auth.currentUser.uid : null;
 
@@ -49,6 +48,7 @@ export default function PersonalTimetableScreen() {
       const myDoc = doc(db, "userTimetables", userID.toString());
       getDoc(myDoc).then((snapshot) => {
         if (snapshot) {
+          // console.log(snapshot.data().timetable);
           setUserTimetable(snapshot.data().timetable);
         }
       });
