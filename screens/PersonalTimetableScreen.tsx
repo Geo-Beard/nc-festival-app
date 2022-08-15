@@ -1,5 +1,5 @@
 import {View, ScrollView, Text, Pressable, Modal, Alert, StyleSheet, SectionList, StatusBar} from "react-native";
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import { db } from '../firebase-config/firebase-config';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { getAuth } from "firebase/auth";
@@ -8,6 +8,7 @@ export default function PersonalTimetableScreen () {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [userTimetable, setUserTimetable] = useState([]);
+    const [userDoc, setUserDoc] = useState([])
     const auth = getAuth();
     const userID = auth.currentUser ? auth.currentUser.uid : null;
 
@@ -24,21 +25,43 @@ export default function PersonalTimetableScreen () {
       }
     }
 
+    function Read() {
+      const myDoc = doc(db,"events","artists");
+      getDoc(myDoc)
+          .then((snapshot) => {
+              if(snapshot) {
+                  setUserDoc(snapshot.data());
+              }
+          })
+  }
+
+  useEffect(() => {
+    Read();
+  }, []);
+
+
+    const artistArray = [];
+
+    if (userDoc !== null) {
+    for (let i = 1; i < 61; i++) {
+      artistArray.push([userDoc[i]])
+    }
+  }
     const DATA = [
         {
         title: "Friday",
-        data: [["Wolf Alice", 1300], ["Fontaines D.C.", 1400], ["Bad Boy Chiller Crew", 1500], ["Arctic Monkeys", 1600], ["Tame Impala", 1300], ["The Mouse Outfit", 1400], ["Khruangbin", 1500], ["Too Many Zooz", 1600]]
+        data: artistArray
         },
-        {
-        title: "Saturday",
-        data: [["Foals", 1300], ["The Libertines", 1400], ["Idles", 1500], ["Hak Baker", 1600], ["Lianne La Havas", 1300], ["Skunk Anansie", 1400], ["Metronomy", 1500], ["Haim", 1600]]
-        }
+        // {
+        // title: "Saturday",
+        // data: [["Foals", 1300], ["The Libertines", 1400], ["Idles", 1500], ["Hak Baker", 1600], ["Lianne La Havas", 1300], ["Skunk Anansie", 1400], ["Metronomy", 1500], ["Haim", 1600]]
+        // }
     ];
 
     const Item = ({ title }) => (
       <View style={styles.item}>
-        <Text style={styles.title}>{title[0]}</Text>
-        <Text>{title[1]}</Text>
+        <Text style={styles.title}>{title["name"]}</Text>
+        <Text>{title["time"]}</Text>
         <Pressable
           disabled={false}
           style={[styles.button, styles.buttonClose]}
@@ -102,7 +125,8 @@ export default function PersonalTimetableScreen () {
           </Modal>
           <Pressable
             style={[styles.button, styles.buttonOpen]}
-            onPress={() => setModalVisible(true)}
+            onPress={() => {setModalVisible(true);
+                            console.log(artistArray)}}
           >
             <Text style={styles.textStyle}>Add events</Text>
           </Pressable>
