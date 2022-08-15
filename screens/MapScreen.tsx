@@ -34,6 +34,7 @@ export default function MapScreen({ navigation }) {
   const user = auth.currentUser;
   const [userMarkers, setUserMarkers] = useState<any | null>(null);
   const [location, setLocation] = useState<any | null>(null);
+  const [locations, setLocations] = useState<any | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [markerPlaced, setMarkerPlaced] = useState(false);
   const [markerDeleted, setMarkerDeleted] = useState(false);
@@ -57,6 +58,18 @@ export default function MapScreen({ navigation }) {
       }
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
+
+      let locations = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 3000,
+          distanceInterval: 10,
+        },
+        (loc) => {
+          setLocations(loc.coords);
+          console.log(loc.coords);
+        }
+      );
       setMarkerLoading(true);
     })();
   }, []);
@@ -86,7 +99,7 @@ export default function MapScreen({ navigation }) {
     ReadMarker();
     setMarkerPlaced(false);
     setMarkerDeleted(false);
-  }, [markerPlaced, markerDeleted, markerLoading]);
+  }, [markerPlaced, markerDeleted, markerLoading, locations]);
 
   //CREATE
   function CreateMarker(newMarker: any) {
@@ -130,8 +143,8 @@ export default function MapScreen({ navigation }) {
 
   function NavigateTo(latitude: number, longitude: number) {
     const currentLocation = {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
+      latitude: locations.latitude,
+      longitude: locations.longitude,
     };
     const markerLocation = {
       latitude: latitude,
@@ -144,7 +157,7 @@ export default function MapScreen({ navigation }) {
     <View style={styles.container}>
       <MapView
         style={styles.map}
-        customMapStyle={mapStyle} // toggle as it may make the basemap not work
+        // customMapStyle={mapStyle} // toggle as it may make the basemap not work
         provider={"google"}
         mapType={"standard"}
         showsCompass={true}
