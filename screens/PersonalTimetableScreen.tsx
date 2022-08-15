@@ -19,6 +19,7 @@ export default function PersonalTimetableScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [userTimetable, setUserTimetable] = useState([]);
   const [allEvents, setAllEvents] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const auth = getAuth();
   const userID = auth.currentUser ? auth.currentUser.uid : null;
 
@@ -45,11 +46,12 @@ export default function PersonalTimetableScreen() {
 
   function ReadMyEvents() {
     if (userID !== null) {
+      setIsLoading(true);
       const myDoc = doc(db, "userTimetables", userID.toString());
       getDoc(myDoc).then((snapshot) => {
         if (snapshot) {
-          // console.log(snapshot.data().timetable);
           setUserTimetable(snapshot.data().timetable);
+          setIsLoading(false);
         }
       });
     }
@@ -61,18 +63,18 @@ export default function PersonalTimetableScreen() {
 
   useEffect(() => {
     ReadMyEvents();
-  }, []);
+  }, [isLoading]);
 
   const eventsArray = allEvents !== null ? Object.values(allEvents) : null;
 
   return (
     <ScrollView>
       <Text>My Timetable</Text>
-      {userTimetable.length === 0 && (
-        <Text>You haven't added any events yet.</Text>
-      )}
 
-      {userTimetable.length !== 0 &&
+      {userTimetable.length === 0 ? (
+        <Text>You haven't added any events yet.</Text>
+      ) : (
+        userTimetable.length !== 0 &&
         userTimetable.map((artist) => {
           return (
             <Card key={artist.name + Math.random()}>
@@ -96,7 +98,8 @@ export default function PersonalTimetableScreen() {
               </Pressable>
             </Card>
           );
-        })}
+        })
+      )}
 
       <View style={styles.centeredView}>
         <Modal
