@@ -33,6 +33,8 @@ export default function PersonalTimetableScreen() {
         Alert.alert("Something went wrong. Please re-add your events.");
       });
     }
+  }
+
   function ReadAllEvents() {
     const myDoc = doc(db, "events", "artists");
     getDoc(myDoc).then((snapshot) => {
@@ -163,6 +165,7 @@ export default function PersonalTimetableScreen() {
         </Pressable>
       </View>
     </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
