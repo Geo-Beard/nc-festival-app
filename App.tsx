@@ -7,6 +7,8 @@ import LoginScreen from "./screens/LoginScreen";
 import PersonalTimetableScreen from "./screens/PersonalTimetableScreen";
 import UploadPhotoScreen from "./screens/UploadPhotoScreen";
 import DatabaseTest from "./screens/DatabaseTest";
+// NOTIFICATION:
+import FlashMessage from 'react-native-flash-message';
 // NAVIGATION:
 const Stack = createNativeStackNavigator();
 import TabNavigator from "./TabNavigator";
@@ -24,6 +26,7 @@ export default function App() {
           <Stack.Screen name="Profile" component={TabNavigator} />
           <Stack.Screen name="Test" component={DatabaseTest} />
         </Stack.Navigator>
+        <FlashMessage position="top"/>
       </NavigationContainer>
     </>
   );
