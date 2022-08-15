@@ -20,6 +20,7 @@ export default function PersonalTimetableScreen() {
   const [userTimetable, setUserTimetable] = useState([]);
   const [allEvents, setAllEvents] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [viewMyTimetable, setViewMyTimetable] = useState(false);
   const auth = getAuth();
   const userID = auth.currentUser ? auth.currentUser.uid : null;
 
@@ -126,16 +127,14 @@ export default function PersonalTimetableScreen() {
                           <Paragraph>{`${artist.stage} stage`} </Paragraph>
                         </Card.Content>
                         <Card.Cover source={{ uri: artist.image }} />
-                        {!isLoading && (
-                          <AddEventButton
-                            style={[styles.button, styles.buttonClose]}
-                            artist={artist}
-                            userTimetable={userTimetable}
-                            setUserTimetable={setUserTimetable}
-                          >
-                            <Text style={styles.textStyle}>Add</Text>
-                          </AddEventButton>
-                        )}
+                        <AddEventButton
+                          style={[styles.button, styles.buttonClose]}
+                          artist={artist}
+                          userTimetable={userTimetable}
+                          setUserTimetable={setUserTimetable}
+                        >
+                          <Text style={styles.textStyle}>Add</Text>
+                        </AddEventButton>
                       </Card>
                     );
                   })}
@@ -233,3 +232,4 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
 });
+
