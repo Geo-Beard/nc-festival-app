@@ -1,14 +1,12 @@
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { StyleSheet } from "react-native";
 // SCREENS:
 import SignupScreen from "./screens/SignupScreen";
 import LoginScreen from "./screens/LoginScreen";
 import PersonalTimetableScreen from "./screens/PersonalTimetableScreen";
 import UploadPhotoScreen from "./screens/UploadPhotoScreen";
 import DatabaseTest from "./screens/DatabaseTest";
-
 // NAVIGATION:
 const Stack = createNativeStackNavigator();
 import TabNavigator from "./TabNavigator";
