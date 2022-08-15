@@ -10,7 +10,7 @@ export default function LogoutButton({ navigation }: any) {
   function logout() {
     signOut(auth)
       .then(() => {
-        console.log("Sign out successful");
+        console.log("Log out successful");
         navigation.navigate("Signup");
       })
       .catch((error) => {
@@ -23,9 +23,9 @@ export default function LogoutButton({ navigation }: any) {
     <>
       {console.log(userID)}
       <Pressable onPress={logout} style={styles.button}>
-        <Text style={styles.textStyle}>Sign out</Text>
+        <Text style={styles.textStyle}>Log out</Text>
       </Pressable>
-      {error && <Text>Unable to sign out, please try again</Text>}
+      {error && <Text>Unable to log out, please try again</Text>}
     </>
   );
 }
