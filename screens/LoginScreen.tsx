@@ -28,7 +28,7 @@ export default function LoginScreen({ navigation }) {
           // ...
         })
         .then(() => {
-          navigation.navigate("Profile");
+          navigation.navigate("PersonalTimetable");
         })
         .catch((error) => {
           setSubmitted(false);
