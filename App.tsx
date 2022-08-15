@@ -11,6 +11,7 @@ import LoginScreen from './screens/LoginScreen';
 import TimetableScreen from './screens/TimetableScreen';
 import PersonalTimetableScreen from "./screens/PersonalTimetableScreen"
 import UploadPhotoScreen from './screens/UploadPhotoScreen';
+import FriendsScreen from './screens/FriendsScreen';
 import DatabaseTest from './screens/DatabaseTest'
 //notification message
 import FlashMessage from 'react-native-flash-message';
@@ -20,7 +21,7 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Photos">
+      <Stack.Navigator initialRouteName="Friends">
         <Stack.Screen name="Signup" component={SignupScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Map" component={MapScreen} />
@@ -32,6 +33,7 @@ export default function App() {
           name="PersonalTimetable"
           component={PersonalTimetableScreen}
         />
+        <Stack.Screen name="Friends" component={FriendsScreen} />
         <Stack.Screen name="Test" component={DatabaseTest} />
       </Stack.Navigator>
       <FlashMessage position="top"/>
