@@ -1,8 +1,9 @@
-// GENERIC TENT PINS
+// GENERIC TENT/USER PINS
 import yellowTentPin from "../map-pins/yellowTentPin.png";
 import blueTentPin from "../map-pins/blueTentPin.png";
 import redTentPin from "../map-pins/redTentPin.png";
 import greenTentPin from "../map-pins/greenTentPin.png";
+import crossPin from "../map-pins/crossPin.png";
 
 // STAGE PINS
 import stagePin from "../map-pins/stagePin.png";
@@ -32,6 +33,7 @@ export {
   blueTentPin,
   redTentPin,
   greenTentPin,
+  crossPin,
   stagePin,
   stageTwoPin,
   tentStagePin,

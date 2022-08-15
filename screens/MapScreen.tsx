@@ -1,6 +1,13 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Dimensions, Button } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  Button,
+  Modal,
+} from "react-native";
 import MapView, { Polyline } from "react-native-maps";
 import { Marker, Callout } from "react-native-maps";
 import Geojson from "react-native-geojson";
@@ -30,6 +37,9 @@ export default function MapScreen({ navigation }) {
   const [markerPlaced, setMarkerPlaced] = useState(false);
   const [markerDeleted, setMarkerDeleted] = useState(false);
   const [routePolyline, setRoutePolyline] = useState(null);
+  const [markerLoading, setMarkerLoading] = useState(null);
+  const [myMarker, setMyMarker] = useState(mapPins.yellowTentPin);
+  const [modalVisible, setModalVisible] = useState(false);
 
   //User authentication for using geolocation
   useEffect(() => {
@@ -41,6 +51,7 @@ export default function MapScreen({ navigation }) {
       }
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
+      setMarkerLoading(true);
     })();
   }, []);
 
@@ -50,7 +61,6 @@ export default function MapScreen({ navigation }) {
   } else if (location) {
     text = JSON.stringify(location);
   }
-  
 
   //CRUD methods for firestore
   //READ
@@ -63,13 +73,14 @@ export default function MapScreen({ navigation }) {
       markerArray.push(userMarker.data());
     });
     setUserMarkers([...markerArray]);
+    setMarkerLoading(false);
   }
 
   useEffect(() => {
     ReadMarker();
     setMarkerPlaced(false);
     setMarkerDeleted(false);
-  }, [markerPlaced, markerDeleted]);
+  }, [markerPlaced, markerDeleted, markerLoading]);
 
   //CREATE
   function CreateMarker(newMarker) {
@@ -84,6 +95,7 @@ export default function MapScreen({ navigation }) {
       longitude: event.nativeEvent.coordinate.longitude,
       markerId: uuidv4(),
       userId: user?.uid,
+      pinIcon: myMarker,
     };
     CreateMarker(newMarker);
   }
@@ -93,6 +105,20 @@ export default function MapScreen({ navigation }) {
     const markerRef = doc(db, "userMarkers", `${markerId}`);
     await deleteDoc(markerRef);
     setMarkerDeleted(true);
+  }
+
+  //NAVIGATE
+
+  function NavigateTo(latitude, longitude) {
+    const currentLocation = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    };
+    const markerLocation = {
+      latitude: latitude,
+      longitude: longitude,
+    };
+    setRoutePolyline([currentLocation, markerLocation]);
   }
 
   return (
@@ -262,21 +288,19 @@ export default function MapScreen({ navigation }) {
 
         {/* POLYLINE TEST */}
         <View>
-          <Polyline
-            coordinates={[
-              { latitude: 53.8362441, longitude: -1.5009048 },
-              { latitude: 53.8341043, longitude: -1.5022191 },
-            ]}
-          />
-          {location !== null &&<Polyline
-            coordinates={[
-              {
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-              },
-              { latitude: 53.8341043, longitude: -1.5022191 },
-            ]}
-          />}
+          {routePolyline !== null && <Polyline coordinates={routePolyline} />}
+
+          {location !== null && (
+            <Polyline
+              coordinates={[
+                {
+                  latitude: location.coords.latitude,
+                  longitude: location.coords.longitude,
+                },
+                { latitude: 53.8341043, longitude: -1.5022191 },
+              ]}
+            />
+          )}
         </View>
 
         {/* USER MARKERS */}
@@ -291,21 +315,75 @@ export default function MapScreen({ navigation }) {
                     longitude: mark.longitude,
                   }}
                   anchor={{ x: 0.5, y: 0.5 }}
-                  icon={mapPins.yellowTentPin}
+                  icon={mark.pinIcon}
                 >
-                  <Callout
-                    onPress={() => {
-                      DeleteMarker(mark.markerId);
-                    }}
-                  >
-                    <Text>Delete Marker</Text>
-                  </Callout>
+                  <View>
+                    <Callout
+                      onPress={() => {
+                        setModalVisible(!modalVisible);
+                      }}
+                    >
+                      <Text>Options</Text>
+
+                      {modalVisible && (
+                        <Modal
+                          animationType="slide"
+                          transparent={true}
+                          visible={modalVisible}
+                          onRequestClose={() => {
+                            setModalVisible(!modalVisible);
+                          }}
+                        >
+                          <Button
+                            title="Navigate To"
+                            onPress={() => {
+                              setModalVisible(!modalVisible);
+                              NavigateTo(mark.latitude, mark.longitude);
+                            }}
+                          />
+                          <Button
+                            title="Delete Marker"
+                            onPress={() => {
+                              setModalVisible(!modalVisible);
+                              DeleteMarker(mark.markerId);
+                            }}
+                          />
+                          <Button
+                            title="Close Options"
+                            onPress={() => {
+                              setModalVisible(!modalVisible);
+                            }}
+                          ></Button>
+                        </Modal>
+                      )}
+                    </Callout>
+                  </View>
                 </Marker>
               );
             })}
           </View>
         )}
       </MapView>
+      <View>
+        <Button
+          title="MyTent"
+          onPress={() => {
+            setMyMarker(mapPins.yellowTentPin);
+          }}
+        />
+        <Button
+          title="MyFriend"
+          onPress={() => {
+            setMyMarker(mapPins.blueTentPin);
+          }}
+        />
+        <Button
+          title="MyMeeting"
+          onPress={() => {
+            setMyMarker(mapPins.crossPin);
+          }}
+        />
+      </View>
     </View>
   );
 }
@@ -319,7 +397,7 @@ const styles = StyleSheet.create({
   },
   map: {
     width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height / 1.1,
+    height: Dimensions.get("window").height * 0.7,
   },
 });
 
