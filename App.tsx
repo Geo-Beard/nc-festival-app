@@ -26,7 +26,7 @@ export default function App() {
           <Stack.Screen name="Profile" component={TabNavigator} />
           <Stack.Screen name="Test" component={DatabaseTest} />
         </Stack.Navigator>
-
+        <FlashMessage position="top"/>
       </NavigationContainer>
     </>
   );
