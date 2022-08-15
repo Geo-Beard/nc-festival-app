@@ -4,7 +4,6 @@ import { useState } from "react";
 
 export default function LogoutButton({ navigation }: any) {
   const auth = getAuth();
-  const userID = auth.currentUser ? auth.currentUser.uid : null;
   const [error, setError] = useState(false);
 
   function logout() {
@@ -21,7 +20,6 @@ export default function LogoutButton({ navigation }: any) {
 
   return (
     <>
-      {console.log(userID)}
       <Pressable onPress={logout} style={styles.button}>
         <Text style={styles.textStyle}>Log out</Text>
       </Pressable>
