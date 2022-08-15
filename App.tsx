@@ -1,4 +1,5 @@
 
+
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -14,38 +15,27 @@ import UploadPhotoScreen from './screens/UploadPhotoScreen';
 import FriendsScreen from './screens/FriendsScreen';
 import DatabaseTest from './screens/DatabaseTest'
 //notification message
-import FlashMessage from 'react-native-flash-message';
 
+import FlashMessage from 'react-native-flash-message';
+// NAVIGATION:
 const Stack = createNativeStackNavigator();
+import TabNavigator from "./TabNavigator";
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Signup">
-        <Stack.Screen name="Signup" component={SignupScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Map" component={MapScreen} />
-        <Stack.Screen name="Photos" component={PhotosScreen} />
-        <Stack.Screen name="UploadPhoto" component={UploadPhotoScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="Timetable" component={TimetableScreen} />
-        <Stack.Screen
-          name="PersonalTimetable"
-          component={PersonalTimetableScreen}
-        />
-        <Stack.Screen name="Friends" component={FriendsScreen} />
-        <Stack.Screen name="Test" component={DatabaseTest} />
-      </Stack.Navigator>
-      <FlashMessage position="top"/>
-    </NavigationContainer>
+    <>
+      <NavigationContainer>
+
+        <Stack.Navigator initialRouteName="Profile" screenOptions={{headerShown: false}}>
+          <Stack.Screen name="Signup" component={SignupScreen} options={{headerShown: false}}/>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="UploadPhoto" component={UploadPhotoScreen} />
+          <Stack.Screen name="PersonalTimetable" component={PersonalTimetableScreen} />
+          <Stack.Screen name="Profile" component={TabNavigator} />
+          <Stack.Screen name="Test" component={DatabaseTest} />
+        </Stack.Navigator>
+        <FlashMessage position="top"/>
+      </NavigationContainer>
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

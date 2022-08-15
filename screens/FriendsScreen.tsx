@@ -1,3 +1,4 @@
+
 import { getAuth } from "firebase/auth";
 import { db } from "../firebase-config/firebase-config";
 import {
@@ -79,3 +80,4 @@ export default function FriendsScreen({ navigation }: any) {
     </>
   );
 }
+
