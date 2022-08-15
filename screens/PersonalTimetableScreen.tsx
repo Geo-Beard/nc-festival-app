@@ -63,7 +63,7 @@ export default function PersonalTimetableScreen() {
 
   useEffect(() => {
     ReadMyEvents();
-  }, [isLoading]);
+  }, []);
 
   const eventsArray = allEvents !== null ? Object.values(allEvents) : null;
 
