@@ -8,7 +8,7 @@ export default function TimetableScreen() {
   const [userDoc, setUserDoc] = useState(null);
 
   function Read() {
-    const myDoc = doc(db, "timetableCol", "timetablesDoc");
+    const myDoc = doc(db, "events", "artists");
     getDoc(myDoc).then((snapshot) => {
       if (snapshot) {
         setUserDoc(snapshot.data());
@@ -20,70 +20,107 @@ export default function TimetableScreen() {
     Read();
   }, []);
 
-  const friday_stage1_times = userDoc !== null ? 
-    userDoc["roundhay-festival"]["friday"]["stage-1"]["times"] : null;
-  const friday_stage2_times = userDoc !== null ? 
-    userDoc["roundhay-festival"]["friday"]["stage-2"]["times"] : null;
-  const saturday_stage1_times = userDoc !== null ? 
-    userDoc["roundhay-festival"]["saturday"]["stage-1"]["times"] : null;
-  const saturday_stage2_times = userDoc !== null ? 
-    userDoc["roundhay-festival"]["saturday"]["stage-2"]["times"] : null;
+  const dataArray = userDoc !== null ? Object.values(userDoc) : null;
+  const friMain = dataArray?.filter((artist) => {
+    return artist.day === "Friday" && artist.stage === "Main";
+  });
+  const friTent = dataArray?.filter((artist) => {
+    return artist.day === "Friday" && artist.stage === "Tent";
+  });
+  const friLocal = dataArray?.filter((artist) => {
+    return artist.day === "Friday" && artist.stage === "Local";
+  });
+  const satMain = dataArray?.filter((artist) => {
+    return artist.day === "Saturday" && artist.stage === "Main";
+  });
+  const satTent = dataArray?.filter((artist) => {
+    return artist.day === "Saturday" && artist.stage === "Tent";
+  });
+  const satLocal = dataArray?.filter((artist) => {
+    return artist.day === "Saturday" && artist.stage === "Local";
+  });
 
   return (
     <ScrollView>
       <Text>Timetable</Text>
-      <Text>Switch for Friday/Saturday</Text>
       <Text>Friday</Text>
-      <Text>Stage 1</Text>
-      {userDoc !== null &&
-        friday_stage1_times.map((time) => {
+      <Text>Main Stage</Text>
+      {friMain !== null &&
+        friMain.map((artist) => {
           return (
-            <Card key={time.artist}>
+            <Card key={artist.name + Math.random()}>
               <Card.Content>
-                <Title>{time.artist}</Title>
-                <Paragraph>{time.time}</Paragraph>
+                <Title>{artist.name}</Title>
+                <Paragraph>{artist.time}</Paragraph>
               </Card.Content>
-              <Card.Cover source={{ uri: "https://picsum.photos/700" }} />
+              <Card.Cover source={{ uri: artist.image }} />
             </Card>
           );
         })}
-      <Text>Stage 2</Text>
-      {userDoc !== null &&
-        friday_stage2_times.map((time) => {
+      <Text>Tent Stage</Text>
+      {friTent !== null &&
+        friTent.map((artist) => {
           return (
-            <Card key={time.artist}>
+            <Card key={artist.name + Math.random()}>
               <Card.Content>
-                <Title>{time.artist}</Title>
-                <Paragraph>{time.time}</Paragraph>
+                <Title>{artist.name}</Title>
+                <Paragraph>{artist.time}</Paragraph>
               </Card.Content>
-              <Card.Cover source={{ uri: "https://picsum.photos/700" }} />
+              <Card.Cover source={{ uri: artist.image }} />
             </Card>
           );
         })}
+      <Text>Local Stage</Text>
+      {friLocal !== null &&
+        friLocal.map((artist) => {
+          return (
+            <Card key={artist.name + Math.random()}>
+              <Card.Content>
+                <Title>{artist.name}</Title>
+                <Paragraph>{artist.time}</Paragraph>
+              </Card.Content>
+              <Card.Cover source={{ uri: artist.image }} />
+            </Card>
+          );
+        })}
+
       <Text>Saturday</Text>
-      <Text>Stage 1</Text>
-      {userDoc !== null &&
-        saturday_stage1_times.map((time) => {
+      <Text>Main Stage</Text>
+      {satMain !== null &&
+        satMain.map((artist) => {
           return (
-            <Card key={time.artist}>
+            <Card key={artist.name + Math.random()}>
               <Card.Content>
-                <Title>{time.artist}</Title>
-                <Paragraph>{time.time}</Paragraph>
+                <Title>{artist.name}</Title>
+                <Paragraph>{artist.time}</Paragraph>
               </Card.Content>
-              <Card.Cover source={{ uri: "https://picsum.photos/700" }} />
+              <Card.Cover source={{ uri: artist.image }} />
             </Card>
           );
         })}
-      <Text>Stage 2</Text>
-      {userDoc !== null &&
-        saturday_stage2_times.map((time) => {
+      <Text>Tent Stage</Text>
+      {satTent !== null &&
+        satTent.map((artist) => {
           return (
-            <Card key={time.artist}>
+            <Card key={artist.name + Math.random()}>
               <Card.Content>
-                <Title>{time.artist}</Title>
-                <Paragraph>{time.time}</Paragraph>
+                <Title>{artist.name}</Title>
+                <Paragraph>{artist.time}</Paragraph>
               </Card.Content>
-              <Card.Cover source={{ uri: "https://picsum.photos/700" }} />
+              <Card.Cover source={{ uri: artist.image }} />
+            </Card>
+          );
+        })}
+      <Text>Local Stage</Text>
+      {satLocal !== null &&
+        satLocal.map((artist) => {
+          return (
+            <Card key={artist.name + Math.random()}>
+              <Card.Content>
+                <Title>{artist.name}</Title>
+                <Paragraph>{artist.time}</Paragraph>
+              </Card.Content>
+              <Card.Cover source={{ uri: artist.image }} />
             </Card>
           );
         })}
@@ -92,7 +129,7 @@ export default function TimetableScreen() {
 }
 
 const styles = StyleSheet.create({
-    Card: {
-      backgroundColor: 'red',
-    },
+  Card: {
+    backgroundColor: "red",
+  },
 });
