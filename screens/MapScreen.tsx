@@ -31,15 +31,19 @@ import { getAuth } from "firebase/auth";
 export default function MapScreen({ navigation }) {
   const auth = getAuth();
   const user = auth.currentUser;
-  const [userMarkers, setUserMarkers] = useState(null);
-  const [location, setLocation] = useState(null);
+  const [userMarkers, setUserMarkers] = useState<any | null>(null);
+  const [location, setLocation] = useState<any | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [markerPlaced, setMarkerPlaced] = useState(false);
   const [markerDeleted, setMarkerDeleted] = useState(false);
-  const [routePolyline, setRoutePolyline] = useState(null);
-  const [markerLoading, setMarkerLoading] = useState(null);
+  const [routePolyline, setRoutePolyline] = useState<any | null>(null);
+  const [markerLoading, setMarkerLoading] = useState<any | null>(null);
   const [myMarker, setMyMarker] = useState(mapPins.yellowTentPin);
+
+  //Modal states
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalMarkerId, setModalMarkerId] = useState<any | null>(null);
+  const [navigateMarker, setNavigateMarker] = useState<any | null>(null);
 
   //User authentication for using geolocation
   useEffect(() => {
@@ -68,7 +72,7 @@ export default function MapScreen({ navigation }) {
     const markerRef = collection(db, "userMarkers");
     const q = query(markerRef, where("userId", "==", `${user?.uid}`));
     const allUserMarkers = await getDocs(q);
-    const markerArray = [];
+    const markerArray: any = [];
     allUserMarkers.forEach((userMarker) => {
       markerArray.push(userMarker.data());
     });
@@ -83,13 +87,13 @@ export default function MapScreen({ navigation }) {
   }, [markerPlaced, markerDeleted, markerLoading]);
 
   //CREATE
-  function CreateMarker(newMarker) {
+  function CreateMarker(newMarker: any) {
     const createMarker = doc(db, "userMarkers", `${newMarker.markerId}`);
     setDoc(createMarker, newMarker);
     setMarkerPlaced(true);
   }
 
-  function handleMarker(event) {
+  function handleMarker(event: any) {
     const newMarker = {
       latitude: event.nativeEvent.coordinate.latitude,
       longitude: event.nativeEvent.coordinate.longitude,
@@ -101,7 +105,7 @@ export default function MapScreen({ navigation }) {
   }
 
   //DELETE
-  async function DeleteMarker(markerId) {
+  async function DeleteMarker(markerId: any) {
     const markerRef = doc(db, "userMarkers", `${markerId}`);
     await deleteDoc(markerRef);
     setMarkerDeleted(true);
@@ -109,7 +113,7 @@ export default function MapScreen({ navigation }) {
 
   //NAVIGATE
 
-  function NavigateTo(latitude, longitude) {
+  function NavigateTo(latitude: number, longitude: number) {
     const currentLocation = {
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
@@ -286,27 +290,15 @@ export default function MapScreen({ navigation }) {
           />
         </View>
 
-        {/* POLYLINE TEST */}
+        {/* POLYLINE RENDER */}
         <View>
           {routePolyline !== null && <Polyline coordinates={routePolyline} />}
-
-          {location !== null && (
-            <Polyline
-              coordinates={[
-                {
-                  latitude: location.coords.latitude,
-                  longitude: location.coords.longitude,
-                },
-                { latitude: 53.8341043, longitude: -1.5022191 },
-              ]}
-            />
-          )}
         </View>
 
         {/* USER MARKERS */}
         {userMarkers !== null && (
           <View>
-            {userMarkers.map((mark) => {
+            {userMarkers.map((mark: any) => {
               return (
                 <Marker
                   key={mark.markerId}
@@ -320,6 +312,8 @@ export default function MapScreen({ navigation }) {
                   <View>
                     <Callout
                       onPress={() => {
+                        setNavigateMarker([mark.latitude, mark.longitude]);
+                        setModalMarkerId(mark.markerId);
                         setModalVisible(!modalVisible);
                       }}
                     >
@@ -327,7 +321,7 @@ export default function MapScreen({ navigation }) {
 
                       {modalVisible && (
                         <Modal
-                          animationType="slide"
+                          animationType="fade"
                           transparent={true}
                           visible={modalVisible}
                           onRequestClose={() => {
@@ -338,14 +332,16 @@ export default function MapScreen({ navigation }) {
                             title="Navigate To"
                             onPress={() => {
                               setModalVisible(!modalVisible);
-                              NavigateTo(mark.latitude, mark.longitude);
+                              NavigateTo(navigateMarker[0], navigateMarker[1]);
                             }}
                           />
+                          <Button title="Share Marker" onPress={() => {}} />
                           <Button
                             title="Delete Marker"
                             onPress={() => {
                               setModalVisible(!modalVisible);
-                              DeleteMarker(mark.markerId);
+                              setRoutePolyline(null);
+                              DeleteMarker(modalMarkerId);
                             }}
                           />
                           <Button
@@ -366,21 +362,27 @@ export default function MapScreen({ navigation }) {
       </MapView>
       <View>
         <Button
-          title="MyTent"
+          title="My Tent"
           onPress={() => {
             setMyMarker(mapPins.yellowTentPin);
           }}
         />
         <Button
-          title="MyFriend"
+          title="My Friend"
           onPress={() => {
             setMyMarker(mapPins.blueTentPin);
           }}
         />
         <Button
-          title="MyMeeting"
+          title="My Meeting"
           onPress={() => {
             setMyMarker(mapPins.crossPin);
+          }}
+        />
+        <Button
+          title="Clear Route"
+          onPress={() => {
+            setRoutePolyline(null);
           }}
         />
       </View>
