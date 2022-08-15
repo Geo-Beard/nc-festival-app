@@ -1,13 +1,21 @@
-import * as React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-// SCREENS:
-import SignupScreen from "./screens/SignupScreen";
-import LoginScreen from "./screens/LoginScreen";
-import PersonalTimetableScreen from "./screens/PersonalTimetableScreen";
-import UploadPhotoScreen from "./screens/UploadPhotoScreen";
-import DatabaseTest from "./screens/DatabaseTest";
-// NOTIFICATION:
+
+
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { StyleSheet, Text, View, Button } from 'react-native';
+import SignupScreen from './screens/SignupScreen';
+import MapScreen from './screens/MapScreen';
+import PhotosScreen from './screens/PhotosScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import LoginScreen from './screens/LoginScreen';
+import TimetableScreen from './screens/TimetableScreen';
+import PersonalTimetableScreen from "./screens/PersonalTimetableScreen"
+import UploadPhotoScreen from './screens/UploadPhotoScreen';
+import FriendsScreen from './screens/FriendsScreen';
+import DatabaseTest from './screens/DatabaseTest'
+//notification message
+
 import FlashMessage from 'react-native-flash-message';
 // NAVIGATION:
 const Stack = createNativeStackNavigator();
