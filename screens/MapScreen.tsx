@@ -21,6 +21,7 @@ import {
   doc,
   getDocs,
   setDoc,
+  updateDoc,
   query,
   where,
   deleteDoc,
@@ -38,7 +39,8 @@ export default function MapScreen({ navigation }) {
   const [markerDeleted, setMarkerDeleted] = useState(false);
   const [routePolyline, setRoutePolyline] = useState<any | null>(null);
   const [markerLoading, setMarkerLoading] = useState<any | null>(null);
-  const [myMarker, setMyMarker] = useState(mapPins.yellowTentPin);
+  const [myPinIcon, setMyPinIcon] = useState(mapPins.yellowTentPin);
+  const [myMarker, setMyMarker] = useState("myTent");
 
   //Modal states
   const [modalVisible, setModalVisible] = useState(false);
@@ -88,9 +90,21 @@ export default function MapScreen({ navigation }) {
 
   //CREATE
   function CreateMarker(newMarker: any) {
-    const createMarker = doc(db, "userMarkers", `${newMarker.markerId}`);
-    setDoc(createMarker, newMarker);
-    setMarkerPlaced(true);
+    let checkExists: any = "";
+    userMarkers.forEach((mark: any) => {
+      if (mark.myMarker === newMarker.myMarker) {
+        checkExists = mark.markerId;
+      }
+    });
+    if (checkExists.length === 0) {
+      const createMarker = doc(db, "userMarkers", `${newMarker.markerId}`);
+      setDoc(createMarker, newMarker);
+      setMarkerPlaced(true);
+    } else {
+      const createMarker = doc(db, "userMarkers", `${checkExists}`);
+      updateDoc(createMarker, { ...newMarker, markerId: checkExists });
+      setMarkerPlaced(true);
+    }
   }
 
   function handleMarker(event: any) {
@@ -99,7 +113,8 @@ export default function MapScreen({ navigation }) {
       longitude: event.nativeEvent.coordinate.longitude,
       markerId: uuidv4(),
       userId: user?.uid,
-      pinIcon: myMarker,
+      pinIcon: myPinIcon,
+      myMarker: myMarker,
     };
     CreateMarker(newMarker);
   }
@@ -364,19 +379,22 @@ export default function MapScreen({ navigation }) {
         <Button
           title="My Tent"
           onPress={() => {
-            setMyMarker(mapPins.yellowTentPin);
+            setMyMarker("myTent");
+            setMyPinIcon(mapPins.yellowTentPin);
           }}
         />
         <Button
           title="My Friend"
           onPress={() => {
-            setMyMarker(mapPins.blueTentPin);
+            setMyMarker("myFriend");
+            setMyPinIcon(mapPins.blueTentPin);
           }}
         />
         <Button
           title="My Meeting"
           onPress={() => {
-            setMyMarker(mapPins.crossPin);
+            setMyMarker("myMeeting");
+            setMyPinIcon(mapPins.crossPin);
           }}
         />
         <Button
