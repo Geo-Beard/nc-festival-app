@@ -48,6 +48,9 @@ export default function MapScreen({ navigation }) {
   const [modalMarkerId, setModalMarkerId] = useState<any | null>(null);
   const [navigateMarker, setNavigateMarker] = useState<any | null>(null);
 
+  //Navigation state
+  const [navigateTo, setNavigateTo] = useState<any | null>(null);
+
   //User authentication for using geolocation
   useEffect(() => {
     (async () => {
@@ -63,11 +66,11 @@ export default function MapScreen({ navigation }) {
         {
           accuracy: Location.Accuracy.High,
           timeInterval: 3000,
-          distanceInterval: 10,
+          distanceInterval: 2,
         },
         (loc) => {
           setLocations(loc.coords);
-          console.log(loc.coords);
+          console.log(loc.coords, "<<<loc.coords");
         }
       );
       setMarkerLoading(true);
@@ -99,7 +102,14 @@ export default function MapScreen({ navigation }) {
     ReadMarker();
     setMarkerPlaced(false);
     setMarkerDeleted(false);
-  }, [markerPlaced, markerDeleted, markerLoading, locations]);
+  }, [markerPlaced, markerDeleted, markerLoading]);
+
+  useEffect(() => {
+    if (locations && navigateTo) {
+      setRoutePolyline(null);
+      NavigateTo();
+    }
+  }, [locations]);
 
   //CREATE
   function CreateMarker(newMarker: any) {
@@ -141,16 +151,11 @@ export default function MapScreen({ navigation }) {
 
   //NAVIGATE
 
-  function NavigateTo(latitude: number, longitude: number) {
-    const currentLocation = {
-      latitude: locations.latitude,
-      longitude: locations.longitude,
-    };
-    const markerLocation = {
-      latitude: latitude,
-      longitude: longitude,
-    };
-    setRoutePolyline([currentLocation, markerLocation]);
+  function NavigateTo() {
+    setRoutePolyline([
+      { latitude: locations.latitude, longitude: locations.longitude },
+      navigateTo,
+    ]);
   }
 
   return (
@@ -320,6 +325,7 @@ export default function MapScreen({ navigation }) {
 
         {/* POLYLINE RENDER */}
         <View>
+          {console.log(routePolyline, "<<<routePolyline")}
           {routePolyline !== null && <Polyline coordinates={routePolyline} />}
         </View>
 
@@ -341,6 +347,10 @@ export default function MapScreen({ navigation }) {
                     <Callout
                       onPress={() => {
                         setNavigateMarker([mark.latitude, mark.longitude]);
+                        setNavigateTo({
+                          latitude: mark.latitude,
+                          longitude: mark.longitude,
+                        });
                         setModalMarkerId(mark.markerId);
                         setModalVisible(!modalVisible);
                       }}
@@ -360,7 +370,7 @@ export default function MapScreen({ navigation }) {
                             title="Navigate To"
                             onPress={() => {
                               setModalVisible(!modalVisible);
-                              NavigateTo(navigateMarker[0], navigateMarker[1]);
+                              NavigateTo();
                             }}
                           />
                           <Button title="Share Marker" onPress={() => {}} />
@@ -413,6 +423,7 @@ export default function MapScreen({ navigation }) {
         <Button
           title="Clear Route"
           onPress={() => {
+            setNavigateTo(null);
             setRoutePolyline(null);
           }}
         />
