@@ -12,7 +12,7 @@ import PersonalTimetableScreen from "./screens/PersonalTimetableScreen"
 import UploadPhotoScreen from './screens/UploadPhotoScreen';
 import DatabaseTest from './screens/DatabaseTest'
 //notification message
-import FlashMessage from 'react-native-flash-message';
+import FlashMessage from "react-native-flash-message";
 
 const Stack = createNativeStackNavigator();
 
@@ -31,9 +31,8 @@ export default function App() {
           name="PersonalTimetable"
           component={PersonalTimetableScreen}
         />
-        <Stack.Screen name="Test" component={DatabaseTest} />
       </Stack.Navigator>
-      <FlashMessage position="top"/>
+      <FlashMessage position="top" />
     </NavigationContainer>
   );
 }
