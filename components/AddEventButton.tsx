@@ -6,19 +6,15 @@ export default function AddEventButton({
   userTimetable,
   setUserTimetable,
 }) {
-  const [isAdded, setIsAdded] = useState(false);
   return (
     <>
-      {isAdded ? (
-        <Text>Event added to your timetable</Text>
+      {userTimetable.includes(artist) ? (
+        <Text>Event added to your timetable!</Text>
       ) : (
         <Pressable
           style={[styles.button, styles.buttonClose]}
           onPress={() => {
-            if (!userTimetable.includes(artist)) {
-              setUserTimetable([...userTimetable, artist]);
-              setIsAdded(true);
-            }
+            setUserTimetable([...userTimetable, artist]);
           }}
         >
           <Text style={styles.textStyle}>Add</Text>

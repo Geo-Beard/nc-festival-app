@@ -44,11 +44,10 @@ export default function PersonalTimetableScreen() {
     });
   }
 
-  function ReadMyEvents() {
+  async function ReadMyEvents() {
     if (userID !== null) {
-      setIsLoading(true);
       const myDoc = doc(db, "userTimetables", userID.toString());
-      getDoc(myDoc).then((snapshot) => {
+      await getDoc(myDoc).then((snapshot) => {
         if (snapshot) {
           setUserTimetable(snapshot.data().timetable);
           setIsLoading(false);
@@ -58,11 +57,10 @@ export default function PersonalTimetableScreen() {
   }
 
   useEffect(() => {
-    ReadAllEvents();
-  }, []);
-
-  useEffect(() => {
-    ReadMyEvents();
+    setIsLoading(true);
+    ReadMyEvents().then(() => {
+      ReadAllEvents();
+    });
   }, []);
 
   const eventsArray = allEvents !== null ? Object.values(allEvents) : null;
@@ -107,7 +105,6 @@ export default function PersonalTimetableScreen() {
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
             setModalVisible(!modalVisible);
           }}
         >
@@ -129,14 +126,16 @@ export default function PersonalTimetableScreen() {
                           <Paragraph>{`${artist.stage} stage`} </Paragraph>
                         </Card.Content>
                         <Card.Cover source={{ uri: artist.image }} />
-                        <AddEventButton
-                          style={[styles.button, styles.buttonClose]}
-                          artist={artist}
-                          userTimetable={userTimetable}
-                          setUserTimetable={setUserTimetable}
-                        >
-                          <Text style={styles.textStyle}>Add</Text>
-                        </AddEventButton>
+                        {!isLoading && (
+                          <AddEventButton
+                            style={[styles.button, styles.buttonClose]}
+                            artist={artist}
+                            userTimetable={userTimetable}
+                            setUserTimetable={setUserTimetable}
+                          >
+                            <Text style={styles.textStyle}>Add</Text>
+                          </AddEventButton>
+                        )}
                       </Card>
                     );
                   })}
