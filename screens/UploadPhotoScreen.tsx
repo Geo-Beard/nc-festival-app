@@ -7,7 +7,11 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 //unique ref per image upload
 import { v4 as uuidv4 } from "uuid";
 //create image database
-import { collection, addDoc, serverTimestamp } from "@firebase/firestore";
+import {
+  serverTimestamp,
+  doc,
+  setDoc,
+} from "@firebase/firestore";
 import { db } from "../firebase-config/firebase-config";
 //get current signed-in user
 import { getAuth } from "firebase/auth";
@@ -65,11 +69,13 @@ export default function UploadPhotoScreen() {
         await uploadBytes(imageRef, bytes);
         //image database
         const imageUrl = await getDownloadURL(ref(storage, `images/${uuid}`));
-        await addDoc(collection(db, "festivalImages"), {
+        await setDoc(doc(db, "festivalImages", uuid), {
           imageUrl: imageUrl,
           createdAt: serverTimestamp(),
           likes: 0,
           userId: user?.uid,
+          imageId: uuid,
+          likedByUsers: [],
         });
         setIsUploaded(true);
       } catch (e) {
