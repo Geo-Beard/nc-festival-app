@@ -1,17 +1,17 @@
-import { View, Button, Text, StyleSheet, ScrollView } from "react-native";
+import { Text, StyleSheet, ScrollView, Pressable } from "react-native";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase-config/firebase-config";
 import { useEffect, useState } from "react";
 import { Card, Title, Paragraph } from "react-native-paper";
 
-export default function TimetableScreen() {
-  const [userDoc, setUserDoc] = useState(null);
+export default function TimetableScreen({ navigation }) {
+  const [timetable, setTimetable] = useState(null);
 
   function Read() {
     const myDoc = doc(db, "events", "artists");
     getDoc(myDoc).then((snapshot) => {
       if (snapshot) {
-        setUserDoc(snapshot.data());
+        setTimetable(snapshot.data());
       }
     });
   }
@@ -20,29 +20,56 @@ export default function TimetableScreen() {
     Read();
   }, []);
 
-  const dataArray = userDoc !== null ? Object.values(userDoc) : null;
-  const friMain = dataArray?.filter((artist) => {
-    return artist.day === "Friday" && artist.stage === "Main";
-  });
-  const friTent = dataArray?.filter((artist) => {
-    return artist.day === "Friday" && artist.stage === "Tent";
-  });
-  const friLocal = dataArray?.filter((artist) => {
-    return artist.day === "Friday" && artist.stage === "Local";
-  });
-  const satMain = dataArray?.filter((artist) => {
-    return artist.day === "Saturday" && artist.stage === "Main";
-  });
-  const satTent = dataArray?.filter((artist) => {
-    return artist.day === "Saturday" && artist.stage === "Tent";
-  });
-  const satLocal = dataArray?.filter((artist) => {
-    return artist.day === "Saturday" && artist.stage === "Local";
-  });
+  const dataArray = timetable !== null ? Object.values(timetable) : null;
+
+  const friMain =
+    dataArray !== null
+      ? dataArray?.filter((artist) => {
+          return artist.day === "Friday" && artist.stage === "Main";
+        })
+      : null;
+
+  const friTent =
+    dataArray !== null
+      ? dataArray?.filter((artist) => {
+          return artist.day === "Friday" && artist.stage === "Tent";
+        })
+      : null;
+  const friLocal =
+    dataArray !== null
+      ? dataArray?.filter((artist) => {
+          return artist.day === "Friday" && artist.stage === "Local";
+        })
+      : null;
+  const satMain =
+    dataArray !== null
+      ? dataArray?.filter((artist) => {
+          return artist.day === "Saturday" && artist.stage === "Main";
+        })
+      : null;
+  const satTent =
+    dataArray !== null
+      ? dataArray?.filter((artist) => {
+          return artist.day === "Saturday" && artist.stage === "Tent";
+        })
+      : null;
+  const satLocal =
+    dataArray !== null
+      ? dataArray?.filter((artist) => {
+          return artist.day === "Saturday" && artist.stage === "Local";
+        })
+      : null;
 
   return (
     <ScrollView>
-      <Text>Timetable</Text>
+      <Pressable
+        style={styles.button}
+        onPress={() => {
+          navigation.navigate("PersonalTimetable");
+        }}
+      >
+        <Text>View my timetable</Text>
+      </Pressable>
       <Text>Friday</Text>
       <Text>Main Stage</Text>
       {friMain !== null &&
@@ -131,5 +158,11 @@ export default function TimetableScreen() {
 const styles = StyleSheet.create({
   Card: {
     backgroundColor: "red",
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    backgroundColor: "#F194FF",
   },
 });
