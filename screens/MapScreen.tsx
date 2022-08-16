@@ -20,6 +20,7 @@ import * as mapPins from "../assets/map-pins/index";
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   setDoc,
   updateDoc,
@@ -29,6 +30,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase-config/firebase-config";
 import { getAuth } from "firebase/auth";
+import { async } from "@firebase/util";
 
 export default function MapScreen({ navigation }: any) {
   const auth = getAuth();
@@ -47,14 +49,18 @@ export default function MapScreen({ navigation }: any) {
   //Modal states
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMarkerId, setModalMarkerId] = useState<any | null>(null);
-  const [navigateMarker, setNavigateMarker] = useState<any | null>(null);
+
+  //Shared Markers
+  const [shareMarker, setShareMarker] = useState<any | null>(null);
+  const [sharedMarkers, setSharedMarkers] = useState<any | null>(null);
+  const [friendVisible, setFriendVisible] = useState<boolean>(true);
 
   //Navigation state
   const [navigateTo, setNavigateTo] = useState<any | null>(null);
 
   //Button state
   const [selectMyTent, setSelectMyTent] = useState<boolean>(false);
-  const [selectMyFriend, setSelectMyFriend] = useState<boolean>(false);
+  const [selectMyPosition, setSelectMyPosition] = useState<boolean>(false);
   const [selectMyMeeting, setSelectMyMeeting] = useState<boolean>(false);
 
   //User authentication for using geolocation
@@ -103,6 +109,29 @@ export default function MapScreen({ navigation }: any) {
     setMarkerLoading(false);
   }
 
+  async function ReadSharedMarkers() {
+    const friendArray = await ReadFriendsMarkers();
+    const markerRef = collection(db, "userMarkers");
+    const q = query(markerRef, where("userId", "in", [...friendArray]));
+    const allSharedMarkers = await getDocs(q);
+    const sharedMarkerArray: any = [];
+    allSharedMarkers.forEach((sharedMarker) => {
+      sharedMarkerArray.push(sharedMarker.data());
+    });
+    setSharedMarkers([...sharedMarkerArray]);
+    setMarkerLoading(false);
+  }
+
+  async function ReadFriendsMarkers() {
+    const friendsRef = await getDoc(doc(db, "users", `${user?.uid}`));
+    const friendData = friendsRef.data();
+    const friendArray: any = [];
+    friendData?.friends.forEach((friend: string) => {
+      friendArray.push(friend);
+    });
+    return friendArray;
+  }
+
   useEffect(() => {
     ReadMarker();
     setMarkerPlaced(false);
@@ -143,6 +172,19 @@ export default function MapScreen({ navigation }: any) {
       userId: user?.uid,
       pinIcon: myPinIcon,
       myMarker: myMarker,
+    };
+    CreateMarker(newMarker);
+  }
+
+  async function handlePosition() {
+    let location = await Location.getCurrentPositionAsync({});
+    const newMarker = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+      markerId: uuidv4(),
+      userId: user?.uid,
+      pinIcon: mapPins.greenCrossPin,
+      myMarker: "myPosition",
     };
     CreateMarker(newMarker);
   }
@@ -318,7 +360,7 @@ export default function MapScreen({ navigation }: any) {
                 NavigateTo();
               }}
             >
-              <Text>Navigate To</Text>
+              <Text>Navigate To: Main Stage</Text>
             </Callout>
           </Marker>
           {/* SECOND STAGE */}
@@ -335,7 +377,7 @@ export default function MapScreen({ navigation }: any) {
                 NavigateTo();
               }}
             >
-              <Text>Navigate To</Text>
+              <Text>Navigate To: Local Stage</Text>
             </Callout>
           </Marker>
           {/* TENT STAGE */}
@@ -352,7 +394,7 @@ export default function MapScreen({ navigation }: any) {
                 NavigateTo();
               }}
             >
-              <Text>Navigate To</Text>
+              <Text>Navigate To: Tent Stage</Text>
             </Callout>
           </Marker>
           {/* NIGHT ENTERTAINMENT STAGE */}
@@ -369,7 +411,7 @@ export default function MapScreen({ navigation }: any) {
                 NavigateTo();
               }}
             >
-              <Text>Navigate To</Text>
+              <Text>Navigate To: Night Entertainment</Text>
             </Callout>
           </Marker>
         </View>
@@ -378,6 +420,36 @@ export default function MapScreen({ navigation }: any) {
         <View>
           {routePolyline !== null && <Polyline coordinates={routePolyline} />}
         </View>
+
+        {/* SHARED MARKERS */}
+
+        {sharedMarkers !== null && friendVisible && (
+          <View>
+            {sharedMarkers.map((mark: any) => {
+              return (
+                <Marker
+                  key={mark.markerId}
+                  coordinate={{
+                    latitude: mark.latitude,
+                    longitude: mark.longitude,
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  icon={mark.pinIcon}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: mark.latitude,
+                      longitude: mark.longitude,
+                    });
+                  }}
+                >
+                  <Callout onPress={() => NavigateTo()}>
+                    <Text>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
 
         {/* USER MARKERS */}
         {userMarkers !== null && (
@@ -396,7 +468,6 @@ export default function MapScreen({ navigation }: any) {
                   <View>
                     <Callout
                       onPress={() => {
-                        setNavigateMarker([mark.latitude, mark.longitude]);
                         setNavigateTo({
                           latitude: mark.latitude,
                           longitude: mark.longitude,
@@ -423,7 +494,6 @@ export default function MapScreen({ navigation }: any) {
                               NavigateTo();
                             }}
                           />
-                          <Button title="Share Marker" onPress={() => {}} />
                           <Button
                             title="Delete Marker"
                             onPress={() => {
@@ -450,13 +520,13 @@ export default function MapScreen({ navigation }: any) {
       </MapView>
 
       {/* MAP BUTTONS */}
-      <View>
+      <View style={styles.mapButtonContainer}>
         <Pressable
           onPress={() => {
             setMyMarker("myTent");
             setMyPinIcon(mapPins.yellowTentPin);
             setSelectMyTent(true);
-            setSelectMyFriend(false);
+            setSelectMyPosition(false);
             setSelectMyMeeting(false);
           }}
           style={() => [
@@ -470,27 +540,23 @@ export default function MapScreen({ navigation }: any) {
         </Pressable>
         <Pressable
           onPress={() => {
-            setMyMarker("myFriend");
-            setMyPinIcon(mapPins.blueTentPin);
-            setSelectMyTent(false);
-            setSelectMyFriend(true);
-            setSelectMyMeeting(false);
+            handlePosition();
           }}
-          style={() => [
+          style={({ pressed }) => [
             {
-              backgroundColor: selectMyFriend ? "grey" : "cornflowerblue",
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
             },
             styles.myButton,
           ]}
         >
-          <Text style={styles.text}>My Friend</Text>
+          <Text style={styles.text}>My Position</Text>
         </Pressable>
         <Pressable
           onPress={() => {
             setMyMarker("myMeeting");
-            setMyPinIcon(mapPins.crossPin);
+            setMyPinIcon(mapPins.redCrossPin);
             setSelectMyTent(false);
-            setSelectMyFriend(false);
+            setSelectMyPosition(false);
             setSelectMyMeeting(true);
           }}
           style={() => [
@@ -516,6 +582,33 @@ export default function MapScreen({ navigation }: any) {
         >
           <Text style={styles.text}>Clear Route</Text>
         </Pressable>
+        <Pressable
+          onPress={() => {
+            ReadSharedMarkers();
+            setFriendVisible(true);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Update Friend Markers</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setFriendVisible(!friendVisible);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Friend Markers</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -532,10 +625,16 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height * 0.7,
   },
+  mapButtonContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   myButton: {
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 8,
+    paddingVertical: 4,
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
