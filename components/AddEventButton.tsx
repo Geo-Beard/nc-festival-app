@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 
 export default function AddEventButton({
@@ -5,24 +6,33 @@ export default function AddEventButton({
   userTimetable,
   setUserTimetable,
 }) {
+  let isInTimetable = false
+  userTimetable.forEach((time) => {
+    if (time.name === artist.name) {
+      isInTimetable = true
+    }
+  });
   return (
-    userTimetable && (
-      <>
-        {console.log(userTimetable)}
-        {userTimetable.includes(artist) ? (
-          <Text>Event added to your timetable!</Text>
-        ) : (
+    <>
+      {isInTimetable ? (
+        <Text>Event added to your timetable!</Text>
+      ) : (
+        <>
           <Pressable
             style={[styles.button, styles.buttonClose]}
             onPress={() => {
-              setUserTimetable([...userTimetable, artist]);
+              if (userTimetable) {
+                setUserTimetable([...userTimetable, artist]);
+              } else {
+                setUserTimetable([artist]);
+              }
             }}
           >
             <Text style={styles.textStyle}>Add</Text>
           </Pressable>
-        )}
-      </>
-    )
+        </>
+      )}
+    </>
   );
 }
 
