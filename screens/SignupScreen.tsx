@@ -5,8 +5,10 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../firebase-config/firebase-config";
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState<{ email: string }>({ email: "" });
   const [password, setPassword] = useState<{ password: string }>({
     password: "",
@@ -71,7 +73,14 @@ export default function LoginScreen({ navigation }) {
               updateProfile(user, {
                 displayName: username,
               });
+              return user;
             }
+          })
+          .then((user) => {
+            setDoc(doc(db, "users", `${user?.uid}`), {
+              friends: [],
+              userEmail: email.email,
+            });
           })
           .then(() => {
             setSignupSuccess(true);
@@ -122,6 +131,10 @@ export default function LoginScreen({ navigation }) {
         <Button onPress={() => navigation.navigate("Photos")} title="Photos" />
         <Button onPress={() => navigation.navigate("Map")} title="Map" />
         <Button onPress={() => navigation.navigate("Timetable")} title="Timetable" />
+        <Button
+          onPress={() => navigation.navigate("Friends")}
+          title="Friends"
+        />
       </View>
     </>
   );
