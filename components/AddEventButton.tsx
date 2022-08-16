@@ -6,20 +6,23 @@ export default function AddEventButton({
   setUserTimetable,
 }) {
   return (
-    <>
-      {userTimetable.includes(artist) ? (
-        <Text>Event added to your timetable!</Text>
-      ) : (
-        <Pressable
-          style={[styles.button, styles.buttonClose]}
-          onPress={() => {
-            setUserTimetable([...userTimetable, artist]);
-          }}
-        >
-          <Text style={styles.textStyle}>Add</Text>
-        </Pressable>
-      )}
-    </>
+    userTimetable && (
+      <>
+        {console.log(userTimetable)}
+        {userTimetable.includes(artist) ? (
+          <Text>Event added to your timetable!</Text>
+        ) : (
+          <Pressable
+            style={[styles.button, styles.buttonClose]}
+            onPress={() => {
+              setUserTimetable([...userTimetable, artist]);
+            }}
+          >
+            <Text style={styles.textStyle}>Add</Text>
+          </Pressable>
+        )}
+      </>
+    )
   );
 }
 
