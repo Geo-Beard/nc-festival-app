@@ -130,6 +130,7 @@ export default function LoginScreen({ navigation }: any) {
         {/* DEV NAVIGATION */}
         <Button onPress={() => navigation.navigate("Photos")} title="Photos" />
         <Button onPress={() => navigation.navigate("Map")} title="Map" />
+        <Button onPress={() => navigation.navigate("Timetable")} title="Timetable" />
         <Button
           onPress={() => navigation.navigate("Friends")}
           title="Friends"
