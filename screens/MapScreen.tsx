@@ -70,7 +70,6 @@ export default function MapScreen({ navigation }) {
         },
         (loc) => {
           setLocations(loc.coords);
-          console.log(loc.coords, "<<<loc.coords");
         }
       );
       setMarkerLoading(true);
@@ -325,7 +324,6 @@ export default function MapScreen({ navigation }) {
 
         {/* POLYLINE RENDER */}
         <View>
-          {console.log(routePolyline, "<<<routePolyline")}
           {routePolyline !== null && <Polyline coordinates={routePolyline} />}
         </View>
 
