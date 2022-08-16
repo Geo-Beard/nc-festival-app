@@ -17,15 +17,14 @@ import AddEventButton from "../components/AddEventButton";
 
 export default function PersonalTimetableScreen() {
   const [modalVisible, setModalVisible] = useState(false);
-  const [userTimetable, setUserTimetable] = useState([]);
+  const [userTimetable, setUserTimetable] = useState(null);
   const [allEvents, setAllEvents] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const auth = getAuth();
-  const userID = auth.currentUser ? auth.currentUser.uid : null;
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentUser, setCurentUser] = useState<any>(null);
 
   function Create() {
-    if (userID !== null) {
-      const myDoc = doc(db, "userTimetables", userID.toString());
+    if (currentUser) {
+      const myDoc = doc(db, "userTimetables", currentUser.uid.toString());
       const docData = {
         timetable: userTimetable,
       };
@@ -35,44 +34,59 @@ export default function PersonalTimetableScreen() {
     }
   }
 
-  function ReadAllEvents() {
+  async function ReadAllEvents() {
     const myDoc = doc(db, "events", "artists");
-    getDoc(myDoc).then((snapshot) => {
+    await getDoc(myDoc).then((snapshot) => {
       if (snapshot) {
         setAllEvents(snapshot.data());
       }
     });
   }
 
-  async function ReadMyEvents() {
-    if (userID !== null) {
-      const myDoc = doc(db, "userTimetables", userID.toString());
+  async function ReadMyEvents(user) {
+    if (user.uid) {
+      const myDoc = doc(db, "userTimetables", user.uid.toString());
       await getDoc(myDoc).then((snapshot) => {
         if (snapshot) {
           setUserTimetable(snapshot.data().timetable);
-          setIsLoading(false);
         }
       });
     }
   }
 
-  useEffect(() => {
-    setIsLoading(true);
-    ReadMyEvents().then(() => {
-      ReadAllEvents();
+  function checkAuthStatus() {
+    return new Promise((resolve, reject) => {
+      try {
+        getAuth().onAuthStateChanged((user) => {
+          setCurentUser(user);
+          resolve(user);
+        });
+      } catch {
+        reject("api failed");
+      }
     });
+  }
+
+  useEffect(() => {
+    checkAuthStatus().then((user) => {
+      ReadMyEvents(user).then(() => {
+        ReadAllEvents();
+      });
+    });
+    setIsLoading(false);
   }, []);
 
   const eventsArray = allEvents !== null ? Object.values(allEvents) : null;
 
-  return (
+  return isLoading ? (
+    <Text>Loading...</Text>
+  ) : (
     <ScrollView>
       <Text>My Timetable</Text>
 
-      {userTimetable.length === 0 ? (
+      {!userTimetable ? (
         <Text>You haven't added any events yet.</Text>
       ) : (
-        userTimetable.length !== 0 &&
         userTimetable.map((artist) => {
           return (
             <Card key={artist.name + Math.random()}>
@@ -126,16 +140,15 @@ export default function PersonalTimetableScreen() {
                           <Paragraph>{`${artist.stage} stage`} </Paragraph>
                         </Card.Content>
                         <Card.Cover source={{ uri: artist.image }} />
-                        {!isLoading && (
-                          <AddEventButton
-                            style={[styles.button, styles.buttonClose]}
-                            artist={artist}
-                            userTimetable={userTimetable}
-                            setUserTimetable={setUserTimetable}
-                          >
-                            <Text style={styles.textStyle}>Add</Text>
-                          </AddEventButton>
-                        )}
+                        <AddEventButton
+                          style={[styles.button, styles.buttonClose]}
+                          artist={artist}
+                          userTimetable={userTimetable}
+                          setUserTimetable={setUserTimetable}
+                          isLoading={isLoading}
+                        >
+                          <Text style={styles.textStyle}>Add</Text>
+                        </AddEventButton>
                       </Card>
                     );
                   })}
@@ -146,7 +159,7 @@ export default function PersonalTimetableScreen() {
                   setModalVisible(!modalVisible);
                   Create();
                   console.log(
-                    `events added to ${userID}'s timetable on Firebase.`
+                    `events added to ${currentUser.uid}'s timetable on Firebase.`
                   );
                 }}
               >
