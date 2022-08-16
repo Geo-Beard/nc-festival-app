@@ -81,6 +81,7 @@ export default function LoginScreen({ navigation }: any) {
             setDoc(doc(db, "users", `${user?.uid}`), {
               friends: [],
               userEmail: email.email,
+              userId: user?.uid
             });
           })
           .then(() => {
