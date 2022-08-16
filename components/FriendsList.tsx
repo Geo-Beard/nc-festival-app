@@ -5,12 +5,9 @@ import { Button, TextInput, Text } from "react-native";
 import { useEffect, useState } from "react";
 import { showMessage } from "react-native-flash-message";
 
-export default function FriendsList() {
+export default function FriendsList({user}:any) {
   //friends that have access to the users location data
   const [friendsAccessUid, setFriendsAccessUid] = useState(null);
-  //current user uid
-  const auth = getAuth();
-  const user = auth.currentUser;
 
   useEffect(() => {
     //fetch users friends to which the user has access to their locations
