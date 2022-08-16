@@ -34,6 +34,7 @@ export default function MapScreen({ navigation }) {
   const user = auth.currentUser;
   const [userMarkers, setUserMarkers] = useState<any | null>(null);
   const [location, setLocation] = useState<any | null>(null);
+  const [locations, setLocations] = useState<any | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [markerPlaced, setMarkerPlaced] = useState(false);
   const [markerDeleted, setMarkerDeleted] = useState(false);
@@ -47,6 +48,9 @@ export default function MapScreen({ navigation }) {
   const [modalMarkerId, setModalMarkerId] = useState<any | null>(null);
   const [navigateMarker, setNavigateMarker] = useState<any | null>(null);
 
+  //Navigation state
+  const [navigateTo, setNavigateTo] = useState<any | null>(null);
+
   //User authentication for using geolocation
   useEffect(() => {
     (async () => {
@@ -57,6 +61,17 @@ export default function MapScreen({ navigation }) {
       }
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
+
+      let locations = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 3000,
+          distanceInterval: 2,
+        },
+        (loc) => {
+          setLocations(loc.coords);
+        }
+      );
       setMarkerLoading(true);
     })();
   }, []);
@@ -87,6 +102,13 @@ export default function MapScreen({ navigation }) {
     setMarkerPlaced(false);
     setMarkerDeleted(false);
   }, [markerPlaced, markerDeleted, markerLoading]);
+
+  useEffect(() => {
+    if (locations && navigateTo) {
+      setRoutePolyline(null);
+      NavigateTo();
+    }
+  }, [locations]);
 
   //CREATE
   function CreateMarker(newMarker: any) {
@@ -128,23 +150,18 @@ export default function MapScreen({ navigation }) {
 
   //NAVIGATE
 
-  function NavigateTo(latitude: number, longitude: number) {
-    const currentLocation = {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    };
-    const markerLocation = {
-      latitude: latitude,
-      longitude: longitude,
-    };
-    setRoutePolyline([currentLocation, markerLocation]);
+  function NavigateTo() {
+    setRoutePolyline([
+      { latitude: locations.latitude, longitude: locations.longitude },
+      navigateTo,
+    ]);
   }
 
   return (
     <View style={styles.container}>
       <MapView
         style={styles.map}
-        customMapStyle={mapStyle} // toggle as it may make the basemap not work
+        // customMapStyle={mapStyle} // toggle as it may make the basemap not work
         provider={"google"}
         mapType={"standard"}
         showsCompass={true}
@@ -328,6 +345,10 @@ export default function MapScreen({ navigation }) {
                     <Callout
                       onPress={() => {
                         setNavigateMarker([mark.latitude, mark.longitude]);
+                        setNavigateTo({
+                          latitude: mark.latitude,
+                          longitude: mark.longitude,
+                        });
                         setModalMarkerId(mark.markerId);
                         setModalVisible(!modalVisible);
                       }}
@@ -347,7 +368,7 @@ export default function MapScreen({ navigation }) {
                             title="Navigate To"
                             onPress={() => {
                               setModalVisible(!modalVisible);
-                              NavigateTo(navigateMarker[0], navigateMarker[1]);
+                              NavigateTo();
                             }}
                           />
                           <Button title="Share Marker" onPress={() => {}} />
@@ -400,6 +421,7 @@ export default function MapScreen({ navigation }) {
         <Button
           title="Clear Route"
           onPress={() => {
+            setNavigateTo(null);
             setRoutePolyline(null);
           }}
         />
