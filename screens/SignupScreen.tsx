@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, TextInput, Button } from "react-native";
+import { Text, View, TextInput, Pressable, ImageBackground, StyleSheet } from "react-native";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -9,6 +9,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase-config/firebase-config";
 
 export default function LoginScreen({ navigation }: any) {
+  const image = { uri: "https://images.unsplash.com/photo-1520095972714-909e91b038e5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80" };
   const [email, setEmail] = useState<{ email: string }>({ email: "" });
   const [password, setPassword] = useState<{ password: string }>({
     password: "",
@@ -96,45 +97,111 @@ export default function LoginScreen({ navigation }: any) {
   }, [submitted]);
 
   return (
-    <>
+    <View style={styles.container}>
       {signupSuccess && (
         <Text>Signup successful! Please log in to continue</Text>
       )}
-      <View>
-        <TextInput
-          placeholder="Email"
-          accessibilityLabel="Email"
-          onChangeText={handleEmail}
-        />
-        <TextInput
-          placeholder="Username"
-          accessibilityLabel="Username"
-          onChangeText={handleUsername}
-        />
-        <TextInput
-          placeholder="Password"
-          accessibilityLabel="Password"
-          onChangeText={handlePassword}
-          secureTextEntry={true}
-        />
-        <TextInput
-          placeholder="Confirm Password"
-          accessibilityLabel="Confirm Password"
-          onChangeText={handleConfirmPassword}
-          secureTextEntry={true}
-        />
-        <Button onPress={() => setSubmitted(true)} title="Sign Up" />
-        {missingDetailsError && <Text>Missing Details</Text>}
-        {mismatchedPasswordsError && <Text>Passwords Do Not Match</Text>}
-        <Button onPress={() => navigation.navigate("Login")} title="Log In" />
-        {/* DEV NAVIGATION */}
-        <Button onPress={() => navigation.navigate("Photos")} title="Photos" />
-        <Button onPress={() => navigation.navigate("Map")} title="Map" />
-        <Button
-          onPress={() => navigation.navigate("Friends")}
-          title="Friends"
-        />
-      </View>
-    </>
+        <ImageBackground source={image} resizeMode="cover" style={styles.image}>
+        <View style={styles.outerInputView}>
+          <View style={styles.inputView}>
+            <TextInput style={styles.inputText}
+              placeholder="Email"
+              placeholderTextColor="gainsboro"
+              accessibilityLabel="Email"
+              onChangeText={handleEmail}
+            />
+          </View>
+          <View style={styles.inputView}>
+            <TextInput style={styles.inputText}
+              placeholder="Display name"
+              placeholderTextColor="gainsboro"
+              accessibilityLabel="Username"
+              onChangeText={handleUsername}
+            />
+          </View>
+          <View style={styles.inputView}>
+            <TextInput style={styles.inputText}
+              placeholder="Password"
+              placeholderTextColor="gainsboro"
+              accessibilityLabel="Password"
+              onChangeText={handlePassword}
+              secureTextEntry={true}
+            />
+          </View>
+          <View style={styles.inputView}>
+            <TextInput style={styles.inputText}
+              placeholder="Confirm password"
+              placeholderTextColor="gainsboro"
+              accessibilityLabel="Confirm Password"
+              onChangeText={handleConfirmPassword}
+              secureTextEntry={true}
+            />
+          </View>
+          <Pressable style={styles.submitButtons} onPress={() => setSubmitted(true)}>
+            <Text style={styles.buttonText}>Sign up</Text>
+          </Pressable>
+          <Text style={styles.accountText}>Have an account already?</Text>
+          <Pressable style={styles.submitButtons} onPress={() => navigation.navigate("Login")}>
+            <Text style={styles.buttonText}>Log in</Text>
+          </Pressable>
+          {missingDetailsError && <Text>Missing Details</Text>}
+          {mismatchedPasswordsError && <Text>Passwords Do Not Match</Text>}
+        </View>
+        </ImageBackground>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  outerInputView: {
+    marginTop: 45
+  },
+  image: {
+    flex: 1,
+    justifyContent: "center",
+    
+  },
+  inputView: {
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    borderRadius: 30,
+    width: "70%",
+    height: 45,
+    marginLeft: "auto",
+    marginRight: "auto",
+    marginBottom: 20,
+    alignItems: "center",
+  },
+  inputText: {
+    width: "100%",
+    height: "100%",
+    color: "white",
+    textAlign: "center",
+    lineHeight: 45,
+  },
+  submitButtons: {
+    backgroundColor: "rgba(0, 0, 0, 0.9)",
+    borderRadius: 30,
+    width: "70%",
+    height: 45,
+    marginLeft: "auto",
+    marginRight: "auto",
+    marginBottom: 20,
+    alignItems: "center",
+  },
+  accountText: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: 70,
+    marginBottom: 20
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+    lineHeight: 45
+  }
+});
