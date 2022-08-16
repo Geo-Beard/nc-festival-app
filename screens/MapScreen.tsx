@@ -7,6 +7,7 @@ import {
   Dimensions,
   Button,
   Modal,
+  Pressable,
 } from "react-native";
 import MapView, { Polyline } from "react-native-maps";
 import { Marker, Callout } from "react-native-maps";
@@ -29,7 +30,7 @@ import {
 import { db } from "../firebase-config/firebase-config";
 import { getAuth } from "firebase/auth";
 
-export default function MapScreen({ navigation }) {
+export default function MapScreen({ navigation }: any) {
   const auth = getAuth();
   const user = auth.currentUser;
   const [userMarkers, setUserMarkers] = useState<any | null>(null);
@@ -50,6 +51,11 @@ export default function MapScreen({ navigation }) {
 
   //Navigation state
   const [navigateTo, setNavigateTo] = useState<any | null>(null);
+
+  //Button state
+  const [selectMyTent, setSelectMyTent] = useState<boolean>(false);
+  const [selectMyFriend, setSelectMyFriend] = useState<boolean>(false);
+  const [selectMyMeeting, setSelectMyMeeting] = useState<boolean>(false);
 
   //User authentication for using geolocation
   useEffect(() => {
@@ -296,30 +302,76 @@ export default function MapScreen({ navigation }) {
           />
         </View>
 
-        {/* FESTIVAL MARKER LOCATIONS */}
+        {/* FESTIVAL STAGE MARKER LOCATIONS */}
         <View>
+          {/* MAIN STAGE */}
           <Marker
             coordinate={{ latitude: 53.8330422, longitude: -1.5027245 }}
             icon={mapPins.stagePin}
             anchor={{ x: 0.5, y: 0.5 }}
-          />
+            onPress={() => {
+              setNavigateTo({ latitude: 53.8330422, longitude: -1.5027245 });
+            }}
+          >
+            <Callout
+              onPress={() => {
+                NavigateTo();
+              }}
+            >
+              <Text>Navigate To</Text>
+            </Callout>
+          </Marker>
+          {/* SECOND STAGE */}
           <Marker
             coordinate={{ latitude: 53.8368202, longitude: -1.5012567 }}
             icon={mapPins.stageTwoPin}
             anchor={{ x: 0.5, y: 0.5 }}
-          />
+            onPress={() => {
+              setNavigateTo({ latitude: 53.8368202, longitude: -1.5012567 });
+            }}
+          >
+            <Callout
+              onPress={() => {
+                NavigateTo();
+              }}
+            >
+              <Text>Navigate To</Text>
+            </Callout>
+          </Marker>
           {/* TENT STAGE */}
           <Marker
-            coordinate={{ latitude: 53.8361067, longitude: -1.5031648 }}
+            coordinate={{ latitude: 53.8361333, longitude: -1.5031872 }}
             icon={mapPins.tentStagePin}
             anchor={{ x: 0.5, y: 0.5 }}
-          />
+            onPress={() => {
+              setNavigateTo({ latitude: 53.8361333, longitude: -1.5031872 });
+            }}
+          >
+            <Callout
+              onPress={() => {
+                NavigateTo();
+              }}
+            >
+              <Text>Navigate To</Text>
+            </Callout>
+          </Marker>
           {/* NIGHT ENTERTAINMENT STAGE */}
           <Marker
             coordinate={{ latitude: 53.8371708, longitude: -1.4993836 }}
             icon={mapPins.tentStagePin}
             anchor={{ x: 0.5, y: 0.5 }}
-          />
+            onPress={() => {
+              setNavigateTo({ latitude: 53.8371708, longitude: -1.4993836 });
+            }}
+          >
+            <Callout
+              onPress={() => {
+                NavigateTo();
+              }}
+            >
+              <Text>Navigate To</Text>
+            </Callout>
+          </Marker>
         </View>
 
         {/* POLYLINE RENDER */}
@@ -396,35 +448,74 @@ export default function MapScreen({ navigation }) {
           </View>
         )}
       </MapView>
+
+      {/* MAP BUTTONS */}
       <View>
-        <Button
-          title="My Tent"
+        <Pressable
           onPress={() => {
             setMyMarker("myTent");
             setMyPinIcon(mapPins.yellowTentPin);
+            setSelectMyTent(true);
+            setSelectMyFriend(false);
+            setSelectMyMeeting(false);
           }}
-        />
-        <Button
-          title="My Friend"
+          style={() => [
+            {
+              backgroundColor: selectMyTent ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>My Tent</Text>
+        </Pressable>
+        <Pressable
           onPress={() => {
             setMyMarker("myFriend");
             setMyPinIcon(mapPins.blueTentPin);
+            setSelectMyTent(false);
+            setSelectMyFriend(true);
+            setSelectMyMeeting(false);
           }}
-        />
-        <Button
-          title="My Meeting"
+          style={() => [
+            {
+              backgroundColor: selectMyFriend ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>My Friend</Text>
+        </Pressable>
+        <Pressable
           onPress={() => {
             setMyMarker("myMeeting");
             setMyPinIcon(mapPins.crossPin);
+            setSelectMyTent(false);
+            setSelectMyFriend(false);
+            setSelectMyMeeting(true);
           }}
-        />
-        <Button
-          title="Clear Route"
+          style={() => [
+            {
+              backgroundColor: selectMyMeeting ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>My Meeting</Text>
+        </Pressable>
+        <Pressable
           onPress={() => {
             setNavigateTo(null);
             setRoutePolyline(null);
           }}
-        />
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Clear Route</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -440,6 +531,21 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height * 0.7,
+  },
+  myButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+  },
+  text: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: "bold",
+    letterSpacing: 0.25,
+    color: "black",
   },
 });
 
