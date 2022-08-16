@@ -30,7 +30,6 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase-config/firebase-config";
 import { getAuth } from "firebase/auth";
-import { async } from "@firebase/util";
 
 export default function MapScreen({ navigation }: any) {
   const auth = getAuth();
@@ -51,7 +50,6 @@ export default function MapScreen({ navigation }: any) {
   const [modalMarkerId, setModalMarkerId] = useState<any | null>(null);
 
   //Shared Markers
-  const [shareMarker, setShareMarker] = useState<any | null>(null);
   const [sharedMarkers, setSharedMarkers] = useState<any | null>(null);
   const [friendVisible, setFriendVisible] = useState<boolean>(true);
 
@@ -60,7 +58,6 @@ export default function MapScreen({ navigation }: any) {
 
   //Button state
   const [selectMyTent, setSelectMyTent] = useState<boolean>(false);
-  const [selectMyPosition, setSelectMyPosition] = useState<boolean>(false);
   const [selectMyMeeting, setSelectMyMeeting] = useState<boolean>(false);
 
   //User authentication for using geolocation
@@ -526,7 +523,6 @@ export default function MapScreen({ navigation }: any) {
             setMyMarker("myTent");
             setMyPinIcon(mapPins.yellowTentPin);
             setSelectMyTent(true);
-            setSelectMyPosition(false);
             setSelectMyMeeting(false);
           }}
           style={() => [
@@ -556,7 +552,6 @@ export default function MapScreen({ navigation }: any) {
             setMyMarker("myMeeting");
             setMyPinIcon(mapPins.redCrossPin);
             setSelectMyTent(false);
-            setSelectMyPosition(false);
             setSelectMyMeeting(true);
           }}
           style={() => [
