@@ -28,7 +28,7 @@ export default function LoginScreen({ navigation }) {
           // ...
         })
         .then(() => {
-          navigation.navigate("PersonalTimetable");
+          navigation.navigate("Profile");
         })
         .catch((error) => {
           setSubmitted(false);
@@ -39,7 +39,7 @@ export default function LoginScreen({ navigation }) {
   }, [submitted]);
 
   return (
-    <View>
+    <View style={{ flex: 1, justifyContent: 'center' }}>
       <TextInput
         placeholder="Email"
         accessibilityLabel="Email"
