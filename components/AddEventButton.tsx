@@ -6,16 +6,18 @@ export default function AddEventButton({
   userTimetable,
   setUserTimetable,
 }) {
-  let isInTimetable = false
+  let isInTimetable = false;
   userTimetable.forEach((time) => {
     if (time.name === artist.name) {
-      isInTimetable = true
+      isInTimetable = true;
     }
   });
   return (
     <>
       {isInTimetable ? (
-        <Text>Event added to your timetable!</Text>
+        <Text style={{ alignSelf: "center" }}>
+          Event added to your timetable!
+        </Text>
       ) : (
         <>
           <Pressable
@@ -40,13 +42,17 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: 20,
     padding: 10,
+    margin: 10,
     elevation: 2,
   },
   buttonClose: {
-    backgroundColor: "#2196F3",
+    borderColor: "gainsboro",
+    borderWidth: 2,
+    backgroundColor: "white",
+    marginBottom: 20,
   },
   textStyle: {
-    color: "white",
+    color: "black",
     fontWeight: "bold",
     textAlign: "center",
   },
