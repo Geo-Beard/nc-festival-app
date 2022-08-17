@@ -33,6 +33,7 @@ import {
 import { db } from "../firebase-config/firebase-config";
 import { getAuth } from "firebase/auth";
 import { wrap } from "idb";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function MapScreen({ navigation }: any) {
   const auth = getAuth();
@@ -50,6 +51,7 @@ export default function MapScreen({ navigation }: any) {
 
   //Modal states
   const [modalVisible, setModalVisible] = useState(false);
+  const [toggleModalVisible, setToggleModalVisible] = useState(false);
   const [modalMarkerId, setModalMarkerId] = useState<any | null>(null);
 
   //Shared Markers
@@ -955,7 +957,7 @@ export default function MapScreen({ navigation }: any) {
         </Pressable>
         <Pressable
           onPress={() => {
-            setFriendVisible(!friendVisible);
+            setToggleModalVisible(!toggleInfo);
           }}
           style={({ pressed }) => [
             {
@@ -964,138 +966,177 @@ export default function MapScreen({ navigation }: any) {
             styles.myButton,
           ]}
         >
-          <Text style={styles.text}>Toggle Friend Markers</Text>
+          <Text style={styles.text}>Togglables</Text>
         </Pressable>
-        <Pressable
-          onPress={() => {
-            setToggleInfo(!toggleInfo);
-          }}
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? "grey" : "cornflowerblue",
-            },
-            styles.myButton,
-          ]}
-        >
-          <Text style={styles.text}>Toggle Info</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            setToggleTickets(!toggleTickets);
-          }}
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? "grey" : "cornflowerblue",
-            },
-            styles.myButton,
-          ]}
-        >
-          <Text style={styles.text}>Toggle Tickets</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            setToggleMedical(!toggleMedical);
-          }}
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? "grey" : "cornflowerblue",
-            },
-            styles.myButton,
-          ]}
-        >
-          <Text style={styles.text}>Toggle Medical</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            setToggleToilets(!toggleToilets);
-          }}
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? "grey" : "cornflowerblue",
-            },
-            styles.myButton,
-          ]}
-        >
-          <Text style={styles.text}>Toggle Toilets</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            setToggleVendors(!toggleVendors);
-          }}
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? "grey" : "cornflowerblue",
-            },
-            styles.myButton,
-          ]}
-        >
-          <Text style={styles.text}>Toggle Vendors</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            setToggleFood(!toggleFood);
-          }}
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? "grey" : "cornflowerblue",
-            },
-            styles.myButton,
-          ]}
-        >
-          <Text style={styles.text}>Toggle Food</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            setToggleVeggie(!toggleVeggie);
-          }}
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? "grey" : "cornflowerblue",
-            },
-            styles.myButton,
-          ]}
-        >
-          <Text style={styles.text}>Toggle Veggie</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            setTogglePizza(!togglePizza);
-          }}
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? "grey" : "cornflowerblue",
-            },
-            styles.myButton,
-          ]}
-        >
-          <Text style={styles.text}>Toggle Pizza</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            setToggleHotdogs(!toggleHotdogs);
-          }}
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? "grey" : "cornflowerblue",
-            },
-            styles.myButton,
-          ]}
-        >
-          <Text style={styles.text}>Toggle Hotdogs</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            setToggleWater(!toggleWater);
-          }}
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? "grey" : "cornflowerblue",
-            },
-            styles.myButton,
-          ]}
-        >
-          <Text style={styles.text}>Toggle Water</Text>
-        </Pressable>
+
+        {/* TOGGLES  */}
+        {toggleModalVisible && (
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={toggleModalVisible}
+            onRequestClose={() => {
+              setToggleModalVisible(!toggleModalVisible);
+            }}
+          >
+            <Pressable
+              onPress={() => {
+                setFriendVisible(!friendVisible);
+              }}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                },
+                styles.myButton,
+              ]}
+            >
+              <Text style={styles.text}>Toggle Friend Markers</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                setToggleInfo(!toggleInfo);
+              }}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                },
+                styles.myButton,
+              ]}
+            >
+              <Text style={styles.text}>Toggle Info</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                setToggleTickets(!toggleTickets);
+              }}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                },
+                styles.myButton,
+              ]}
+            >
+              <Text style={styles.text}>Toggle Tickets</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                setToggleMedical(!toggleMedical);
+              }}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                },
+                styles.myButton,
+              ]}
+            >
+              <Text style={styles.text}>Toggle Medical</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                setToggleToilets(!toggleToilets);
+              }}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                },
+                styles.myButton,
+              ]}
+            >
+              <Text style={styles.text}>Toggle Toilets</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                setToggleVendors(!toggleVendors);
+              }}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                },
+                styles.myButton,
+              ]}
+            >
+              <Text style={styles.text}>Toggle Vendors</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                setToggleFood(!toggleFood);
+              }}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                },
+                styles.myButton,
+              ]}
+            >
+              <Text style={styles.text}>Toggle Food</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                setToggleVeggie(!toggleVeggie);
+              }}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                },
+                styles.myButton,
+              ]}
+            >
+              <Text style={styles.text}>Toggle Veggie</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                setTogglePizza(!togglePizza);
+              }}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                },
+                styles.myButton,
+              ]}
+            >
+              <Text style={styles.text}>Toggle Pizza</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                setToggleHotdogs(!toggleHotdogs);
+              }}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                },
+                styles.myButton,
+              ]}
+            >
+              <Text style={styles.text}>Toggle Hotdogs</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                setToggleWater(!toggleWater);
+              }}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                },
+                styles.myButton,
+              ]}
+            >
+              <Text style={styles.text}>Toggle Water</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                setToggleModalVisible(!toggleModalVisible);
+              }}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? "grey" : "lightblue",
+                },
+                styles.myButton,
+              ]}
+            >
+              <Text style={styles.text}>Close Togglables</Text>
+            </Pressable>
+          </Modal>
+        )}
       </View>
     </View>
   );
@@ -1110,15 +1151,14 @@ const styles = StyleSheet.create({
   },
   map: {
     width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height * 0.65,
+    height: Dimensions.get("window").height * 0.82,
   },
   mapButtonContainer: {
     flex: 1,
     flexDirection: "row",
     flexWrap: "wrap",
-    height: Dimensions.get("window").height * 0.25,
+    height: Dimensions.get("window").height * 0.2,
     justifyContent: "space-evenly",
-    alignContent: "space-between",
   },
   mapIcons: {
     height: 25,
@@ -1143,10 +1183,11 @@ const styles = StyleSheet.create({
     color: "black",
   },
   myButton: {
-    width: "45%",
+    width: "50%",
+    height: 20,
     alignItems: "center",
+    alignContent: "center",
     justifyContent: "center",
-    paddingVertical: 1,
     borderRadius: 4,
   },
   text: {
