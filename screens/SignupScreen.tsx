@@ -7,6 +7,7 @@ import {
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase-config/firebase-config";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen({ navigation }: any) {
   const image = { uri: "https://images.unsplash.com/photo-1520095972714-909e91b038e5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80" };

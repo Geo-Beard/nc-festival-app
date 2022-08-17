@@ -1,83 +1,56 @@
-
+import { SafeAreaView } from "react-native-safe-area-context";
+import AddFriends from "../components/AddFriends";
+import FriendsList from "../components/FriendsList";
 import { getAuth } from "firebase/auth";
-import { db } from "../firebase-config/firebase-config";
-import {
-  doc,
-  getDocs,
-  collection,
-  query,
-  where,
-  updateDoc,
-  arrayUnion,
-} from "@firebase/firestore";
-import { Button, TextInput } from "react-native";
-import { useState } from "react";
-import { showMessage } from "react-native-flash-message";
+import { useEffect, useState, useCallback } from "react";
+import { DocumentData } from "firebase/firestore";
+import { ScrollView, RefreshControl } from "react-native";
 
 export default function FriendsScreen({ navigation }: any) {
-  const [email, setEmail] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState<boolean>(false)
+  const [currentUser, setCurrentUser] = useState<DocumentData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const auth = getAuth();
-  const user = auth.currentUser;
-
-  const updateFriends = async (friendUid: string) => {
-    try {
-      await updateDoc(doc(db, "users", `${friendUid}`), {
-        friends: arrayUnion(user?.uid),
-      });
-      
-      
-      showMessage({
-        message:
-          "Success. Your friend can now see your location.",
-        type: "success",
-      });
-    } catch (e) {
-      // console.log(e);
-      showMessage({
-        message:
-          "Something went wrong. Please try again.",
-        type: "warning",
-      });
-    }
+  const wait = (timeout: number) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
   };
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
 
-  const fetchFriendUid = async () => {
-    try {
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, where("userEmail", "==", `${email}`));
-      const querySnapshot = await getDocs(q);
-      const array = [];
-      querySnapshot.forEach((doc) => {
-        doc.id && updateFriends(doc.id);
-        array.push(doc.id);
-      });
-      if (array.length < 1) {throw "No user found."}
-      setSubmitted(true);
-    } catch (e) {
-      showMessage({
-        message:
-          "No user found.",
-        type: "danger",
-      });
-    }
+  function checkAuthStatus() {
+    return new Promise((resolve, reject) => {
+      try {
+        getAuth().onAuthStateChanged((user) => {
+          setCurrentUser(user);
+          resolve(user);
+          setIsLoading(false);
+        });
+      } catch {
+        reject("api failed");
+        setIsLoading(false);
+      }
+    });
+  }
 
-  };
-
-  const handleEmail = (emailInput: string) => {
-    setEmail(emailInput);
-  };
+  useEffect(() => {
+    setIsLoading(true);
+    checkAuthStatus();
+  }, []);
 
   return (
-    <>
-      <TextInput
-        onChangeText={handleEmail}
-        placeholder="Email"
-        accessibilityLabel="Email"
-      />
-      <Button title="Submit" onPress={fetchFriendUid} />
-    </>
+    <SafeAreaView style={{ flex: 1, alignItems: "center" }}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <AddFriends />
+        {currentUser && !isLoading && (
+          <FriendsList user={currentUser} refreshing={refreshing} />
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
-
