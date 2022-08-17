@@ -167,6 +167,7 @@ export default function MapScreen({ navigation }: any) {
       longitude: event.nativeEvent.coordinate.longitude,
       markerId: uuidv4(),
       userId: user?.uid,
+      userName: user?.displayName,
       pinIcon: myPinIcon,
       myMarker: myMarker,
     };
@@ -180,6 +181,7 @@ export default function MapScreen({ navigation }: any) {
       longitude: location.coords.longitude,
       markerId: uuidv4(),
       userId: user?.uid,
+      userName: user?.displayName,
       pinIcon: mapPins.greenCrossPin,
       myMarker: "myPosition",
     };
@@ -423,6 +425,16 @@ export default function MapScreen({ navigation }: any) {
         {sharedMarkers !== null && friendVisible && (
           <View>
             {sharedMarkers.map((mark: any) => {
+              let sharedPin = mark.pinIcon;
+              if (mark.pinIcon === 22) {
+                sharedPin = mapPins.blueCrossPin;
+              }
+              if (mark.pinIcon === 26) {
+                sharedPin = mapPins.blueTentPin;
+              }
+              if (mark.pinIcon === 29) {
+                sharedPin = mapPins.yellowCrossPin;
+              }
               return (
                 <Marker
                   key={mark.markerId}
@@ -431,7 +443,7 @@ export default function MapScreen({ navigation }: any) {
                     longitude: mark.longitude,
                   }}
                   anchor={{ x: 0.5, y: 0.5 }}
-                  icon={mark.pinIcon}
+                  icon={sharedPin}
                   onPress={() => {
                     setNavigateTo({
                       latitude: mark.latitude,
@@ -440,7 +452,7 @@ export default function MapScreen({ navigation }: any) {
                   }}
                 >
                   <Callout onPress={() => NavigateTo()}>
-                    <Text>Navigate To</Text>
+                    <Text>Navigate To: {mark.userName}</Text>
                   </Callout>
                 </Marker>
               );
