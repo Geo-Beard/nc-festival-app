@@ -49,7 +49,7 @@ export default function PersonalTimetableScreen() {
     if (userID !== null) {
       const myDoc = doc(db, "userTimetables", userID.toString());
       await getDoc(myDoc).then((snapshot) => {
-        if (snapshot) {
+        if (snapshot && userTimetable.length !== 0) {
           setUserTimetable(snapshot.data().timetable);
           setIsLoading(false);
         }
