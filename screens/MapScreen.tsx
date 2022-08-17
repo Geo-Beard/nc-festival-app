@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -53,15 +53,17 @@ export default function MapScreen({ navigation }: any) {
   const [sharedMarkers, setSharedMarkers] = useState<any | null>(null);
   const [friendVisible, setFriendVisible] = useState<boolean>(true);
   const [friendsArray, setFriendsArray] = useState<any>([]);
+  const [noFriends, setNoFriends] = useState<boolean>(true);
 
   //Navigation state
   const [navigateTo, setNavigateTo] = useState<any | null>(null);
 
   //Button state
-  const [selectMyTent, setSelectMyTent] = useState<boolean>(false);
+  const [selectMyTent, setSelectMyTent] = useState<boolean>(true);
   const [selectMyMeeting, setSelectMyMeeting] = useState<boolean>(false);
 
   //User authentication for using geolocation
+  let unsubscribe: any = useRef(() => undefined);
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -82,8 +84,14 @@ export default function MapScreen({ navigation }: any) {
           setLocations(loc.coords); // need useEffect cleanup here - causing memory leak
         }
       );
+      unsubscribe.current = () => {
+        locations?.remove();
+      };
       setMarkerLoading(true);
     })();
+    return () => {
+      unsubscribe.current();
+    };
   }, []);
 
   let text = "Waiting..";
@@ -550,19 +558,6 @@ export default function MapScreen({ navigation }: any) {
         </Pressable>
         <Pressable
           onPress={() => {
-            handlePosition();
-          }}
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? "grey" : "cornflowerblue",
-            },
-            styles.myButton,
-          ]}
-        >
-          <Text style={styles.text}>My Position</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
             setMyMarker("myMeeting");
             setMyPinIcon(mapPins.redCrossPin);
             setSelectMyTent(false);
@@ -576,6 +571,19 @@ export default function MapScreen({ navigation }: any) {
           ]}
         >
           <Text style={styles.text}>My Meeting</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            handlePosition();
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Mark My Position</Text>
         </Pressable>
         <Pressable
           onPress={() => {
@@ -595,8 +603,9 @@ export default function MapScreen({ navigation }: any) {
           onPress={() => {
             ReadFriendsMarkers();
             if (friendsArray.length === 0) {
-              console.log("No friends");
+              setNoFriends(true);
             } else {
+              setNoFriends(false);
               ReadSharedMarkers();
               setFriendVisible(true);
             }
@@ -608,7 +617,11 @@ export default function MapScreen({ navigation }: any) {
             styles.myButton,
           ]}
         >
-          <Text style={styles.text}>Update Friend Markers</Text>
+          {noFriends ? (
+            <Text style={styles.text}>Update or Add Friends</Text>
+          ) : (
+            <Text style={styles.text}>Refresh Friends</Text>
+          )}
         </Pressable>
         <Pressable
           onPress={() => {
