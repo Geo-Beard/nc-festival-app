@@ -1,0 +1,10 @@
+export { infoPoints } from "./info-points";
+export { ticketsPoints } from "./tickets-points";
+export { medicalPoints } from "./medical-points";
+export { toiletsPoints } from "./toilets-points";
+export { vendorPoints } from "./vendor-points";
+export { foodPoints } from "./food-points";
+export { veggiePoints } from "./veggie-points";
+export { pizzaPoints } from "./pizza-points";
+export { hotdogsPoints } from "./hotdogs-points";
+export { waterPoints } from "./water-points";

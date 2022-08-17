@@ -7,6 +7,7 @@ import {
   Alert,
   StyleSheet,
   StatusBar,
+  ImageBackground,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { db } from "../firebase-config/firebase-config";
@@ -17,14 +18,15 @@ import AddEventButton from "../components/AddEventButton";
 
 export default function PersonalTimetableScreen() {
   const [modalVisible, setModalVisible] = useState(false);
-  const [userTimetable, setUserTimetable] = useState(null);
+  const [userTimetable, setUserTimetable] = useState([]);
   const [allEvents, setAllEvents] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentUser, setCurentUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const auth = getAuth();
+  const userID = auth.currentUser ? auth.currentUser.uid : null;
 
   function Create() {
-    if (currentUser) {
-      const myDoc = doc(db, "userTimetables", currentUser.uid.toString());
+    if (userID !== null) {
+      const myDoc = doc(db, "userTimetables", userID.toString());
       const docData = {
         timetable: userTimetable,
       };
@@ -34,62 +36,61 @@ export default function PersonalTimetableScreen() {
     }
   }
 
-  async function ReadAllEvents() {
+  function ReadAllEvents() {
     const myDoc = doc(db, "events", "artists");
-    await getDoc(myDoc).then((snapshot) => {
+    getDoc(myDoc).then((snapshot) => {
       if (snapshot) {
         setAllEvents(snapshot.data());
       }
     });
   }
 
-  async function ReadMyEvents(user) {
-    if (user.uid) {
-      const myDoc = doc(db, "userTimetables", user.uid.toString());
+  async function ReadMyEvents() {
+    if (userID !== null) {
+      const myDoc = doc(db, "userTimetables", userID.toString());
       await getDoc(myDoc).then((snapshot) => {
-        if (snapshot) {
+        if (snapshot.data() !== undefined) {
           setUserTimetable(snapshot.data().timetable);
         }
+        setIsLoading(false);
       });
     }
   }
 
-  function checkAuthStatus() {
-    return new Promise((resolve, reject) => {
-      try {
-        getAuth().onAuthStateChanged((user) => {
-          setCurentUser(user);
-          resolve(user);
-        });
-      } catch {
-        reject("api failed");
-      }
-    });
-  }
-
   useEffect(() => {
-    checkAuthStatus().then((user) => {
-      ReadMyEvents(user).then(() => {
-        ReadAllEvents();
-      });
+    setIsLoading(true);
+    ReadMyEvents().then(() => {
+      ReadAllEvents();
     });
-    setIsLoading(false);
   }, []);
 
   const eventsArray = allEvents !== null ? Object.values(allEvents) : null;
 
-  return isLoading ? (
-    <Text>Loading...</Text>
-  ) : (
-    <ScrollView>
-      <Text>My Timetable</Text>
+  return (
+    <ScrollView style={styles.scrollView}>
+      <ImageBackground
+        style={styles.image}
+        source={require("../assets/img/personal-timetable-background.jpg")}
+      >
+        <Text style={styles.header}>My Timetable</Text>
 
-      {!userTimetable ? (
+        <Pressable
+          style={[styles.button, styles.buttonOpen]}
+          onPress={() => {
+            setModalVisible(true);
+          }}
+        >
+          <Text style={styles.textStyle}>Add events</Text>
+        </Pressable>
+      </ImageBackground>
+
+      {userTimetable.length === 0 ? (
         <Text>You haven't added any events yet.</Text>
       ) : (
+        userTimetable.length !== 0 &&
         userTimetable.map((artist) => {
           return (
-            <Card key={artist.name + Math.random()}>
+            <Card style={styles.card} key={artist.name + Math.random()}>
               <Card.Content>
                 <Title>{artist.name}</Title>
                 <Paragraph>{`${artist.day} ${artist.time}`} </Paragraph>
@@ -97,7 +98,7 @@ export default function PersonalTimetableScreen() {
               </Card.Content>
               <Card.Cover source={{ uri: artist.image }} />
               <Pressable
-                style={[styles.button, styles.buttonClose]}
+                style={[styles.button, styles.buttonRemove]}
                 onPress={() => {
                   const indexOfArtist = userTimetable.indexOf(artist);
                   userTimetable.splice(indexOfArtist, 1);
@@ -124,14 +125,17 @@ export default function PersonalTimetableScreen() {
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <Text style={styles.modalText}>
+              <Text style={styles.modalTextLarge}>
                 Add artists to your timetable:
               </Text>
               <ScrollView style={styles.container}>
                 {eventsArray !== null &&
                   eventsArray.map((artist) => {
                     return (
-                      <Card key={artist.name + Math.random()}>
+                      <Card
+                        style={styles.card}
+                        key={artist.name + Math.random()}
+                      >
                         <Card.Content>
                           <Title>{artist.name}</Title>
                           <Paragraph>
@@ -145,7 +149,6 @@ export default function PersonalTimetableScreen() {
                           artist={artist}
                           userTimetable={userTimetable}
                           setUserTimetable={setUserTimetable}
-                          isLoading={isLoading}
                         >
                           <Text style={styles.textStyle}>Add</Text>
                         </AddEventButton>
@@ -158,9 +161,6 @@ export default function PersonalTimetableScreen() {
                 onPress={() => {
                   setModalVisible(!modalVisible);
                   Create();
-                  console.log(
-                    `events added to ${currentUser.uid}'s timetable on Firebase.`
-                  );
                 }}
               >
                 <Text style={styles.textStyle}>Save</Text>
@@ -168,22 +168,17 @@ export default function PersonalTimetableScreen() {
             </View>
           </View>
         </Modal>
-        <Pressable
-          style={[styles.button, styles.buttonOpen]}
-          onPress={() => {
-            setModalVisible(true);
-          }}
-        >
-          <Text style={styles.textStyle}>Add events</Text>
-        </Pressable>
       </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  // MODAL:
-
+  scrollView: {
+    flex: 1,
+    marginBottom: 20,
+    backgroundColor: "white",
+  },
   centeredView: {
     flex: 1,
     justifyContent: "center",
@@ -192,10 +187,22 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: "#edede9",
     borderRadius: 20,
     padding: 35,
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  card: {
+    padding: 10,
+    margin: 10,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -211,13 +218,29 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   buttonOpen: {
-    backgroundColor: "#F194FF",
+    borderColor: "gainsboro",
+    borderWidth: 1,
+    backgroundColor: "white",
+    margin: 10,
+    width: 100,
+    alignSelf: "center",
   },
   buttonClose: {
-    backgroundColor: "#2196F3",
+    borderColor: "gainsboro",
+    borderWidth: 1,
+    backgroundColor: "white",
+    margin: 5,
+  },
+  buttonRemove: {
+    borderColor: "gainsboro",
+    borderWidth: 1,
+    backgroundColor: "white",
+    width: 85,
+    alignSelf: "center",
+    margin: 5,
   },
   textStyle: {
-    color: "white",
+    color: "black",
     fontWeight: "bold",
     textAlign: "center",
   },
@@ -225,9 +248,11 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: "center",
   },
-
-  // SECTION LIST:
-
+  modalTextLarge: {
+    marginBottom: 15,
+    fontSize: 20,
+    textAlign: "center",
+  },
   container: {
     flex: 1,
     paddingTop: StatusBar.currentHeight,
@@ -240,9 +265,17 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 32,
-    backgroundColor: "#fff",
+    marginTop: 40,
+    backgroundColor: "rgba(52, 52, 52, 0.0)",
+    color: "white",
+    alignSelf: "center",
+    padding: 20,
+    marginBottom: 30,
   },
   title: {
     fontSize: 24,
+  },
+  image: {
+    height: 230,
   },
 });

@@ -7,6 +7,7 @@ import {
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase-config/firebase-config";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState<{ email: string }>({ email: "" });

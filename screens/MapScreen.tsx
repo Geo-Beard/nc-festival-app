@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,6 +7,8 @@ import {
   Dimensions,
   Button,
   Modal,
+  Pressable,
+  Image,
 } from "react-native";
 import MapView, { Polyline } from "react-native-maps";
 import { Marker, Callout } from "react-native-maps";
@@ -16,9 +18,11 @@ import { v4 as uuidv4 } from "uuid";
 import * as polys from "../assets/polygons/index";
 import * as builds from "../assets/buildings/index";
 import * as mapPins from "../assets/map-pins/index";
+import * as buildingPoints from "../assets/building-points/index";
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   setDoc,
   updateDoc,
@@ -28,8 +32,9 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase-config/firebase-config";
 import { getAuth } from "firebase/auth";
+import { wrap } from "idb";
 
-export default function MapScreen({ navigation }) {
+export default function MapScreen({ navigation }: any) {
   const auth = getAuth();
   const user = auth.currentUser;
   const [userMarkers, setUserMarkers] = useState<any | null>(null);
@@ -40,18 +45,40 @@ export default function MapScreen({ navigation }) {
   const [markerDeleted, setMarkerDeleted] = useState(false);
   const [routePolyline, setRoutePolyline] = useState<any | null>(null);
   const [markerLoading, setMarkerLoading] = useState<any | null>(null);
-  const [myPinIcon, setMyPinIcon] = useState(mapPins.yellowTentPin);
-  const [myMarker, setMyMarker] = useState("myTent");
+  const [myPinIcon, setMyPinIcon] = useState(mapPins.redCrossPin);
+  const [myMarker, setMyMarker] = useState("myMeeting");
 
   //Modal states
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMarkerId, setModalMarkerId] = useState<any | null>(null);
-  const [navigateMarker, setNavigateMarker] = useState<any | null>(null);
+
+  //Shared Markers
+  const [sharedMarkers, setSharedMarkers] = useState<any | null>(null);
+  const [friendVisible, setFriendVisible] = useState<boolean>(true);
+  const [friendsArray, setFriendsArray] = useState<any>([]);
+  const [noFriends, setNoFriends] = useState<boolean>(true);
 
   //Navigation state
   const [navigateTo, setNavigateTo] = useState<any | null>(null);
 
+  //Button state
+  const [selectMyTent, setSelectMyTent] = useState<boolean>(false);
+  const [selectMyMeeting, setSelectMyMeeting] = useState<boolean>(true);
+
+  //Toggles
+  const [toggleInfo, setToggleInfo] = useState<boolean>(false);
+  const [toggleTickets, setToggleTickets] = useState<boolean>(false);
+  const [toggleMedical, setToggleMedical] = useState<boolean>(false);
+  const [toggleToilets, setToggleToilets] = useState<boolean>(false);
+  const [toggleVendors, setToggleVendors] = useState<boolean>(false);
+  const [toggleFood, setToggleFood] = useState<boolean>(false);
+  const [toggleVeggie, setToggleVeggie] = useState<boolean>(false);
+  const [togglePizza, setTogglePizza] = useState<boolean>(false);
+  const [toggleHotdogs, setToggleHotdogs] = useState<boolean>(false);
+  const [toggleWater, setToggleWater] = useState<boolean>(false);
+
   //User authentication for using geolocation
+  let unsubscribe: any = useRef(() => undefined);
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -72,8 +99,14 @@ export default function MapScreen({ navigation }) {
           setLocations(loc.coords);
         }
       );
+      unsubscribe.current = () => {
+        locations?.remove();
+      };
       setMarkerLoading(true);
     })();
+    return () => {
+      unsubscribe.current();
+    };
   }, []);
 
   let text = "Waiting..";
@@ -95,6 +128,30 @@ export default function MapScreen({ navigation }) {
     });
     setUserMarkers([...markerArray]);
     setMarkerLoading(false);
+  }
+
+  async function ReadSharedMarkers() {
+    const friendArray = await ReadFriendsMarkers();
+    const markerRef = collection(db, "userMarkers");
+    const q = query(markerRef, where("userId", "in", [...friendArray]));
+    const allSharedMarkers = await getDocs(q);
+    const sharedMarkerArray: any = [];
+    allSharedMarkers.forEach((sharedMarker) => {
+      sharedMarkerArray.push(sharedMarker.data());
+    });
+    setSharedMarkers([...sharedMarkerArray]);
+    setMarkerLoading(false);
+  }
+
+  async function ReadFriendsMarkers() {
+    const friendsRef = await getDoc(doc(db, "users", `${user?.uid}`));
+    const friendData = friendsRef.data();
+    const friendArray: any = [];
+    friendData?.friends.forEach((friend: string) => {
+      friendArray.push(friend);
+    });
+    setFriendsArray(friendArray);
+    return friendArray;
   }
 
   useEffect(() => {
@@ -135,8 +192,23 @@ export default function MapScreen({ navigation }) {
       longitude: event.nativeEvent.coordinate.longitude,
       markerId: uuidv4(),
       userId: user?.uid,
+      userName: user?.displayName,
       pinIcon: myPinIcon,
       myMarker: myMarker,
+    };
+    CreateMarker(newMarker);
+  }
+
+  async function handlePosition() {
+    let location = await Location.getCurrentPositionAsync({});
+    const newMarker = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+      markerId: uuidv4(),
+      userId: user?.uid,
+      userName: user?.displayName,
+      pinIcon: mapPins.greenCrossPin,
+      myMarker: "myPosition",
     };
     CreateMarker(newMarker);
   }
@@ -192,11 +264,11 @@ export default function MapScreen({ navigation }) {
           />
           <Geojson
             geojson={polys.accessPath}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(234, 181, 54, 0.92)"
           />
           <Geojson
             geojson={polys.accessPath2}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(234, 181, 54, 0.92)"
           />
           <Geojson
             geojson={polys.campingArea}
@@ -204,11 +276,11 @@ export default function MapScreen({ navigation }) {
           />
           <Geojson
             geojson={polys.dropOff}
-            fillColor="rgba(130, 30, 190, 0.5)"
+            fillColor="rgba(234, 222, 54, 0.92)"
           />
           <Geojson
             geojson={polys.dropOff2}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(234, 222, 54, 0.92)"
           />
           <Geojson
             geojson={polys.mainAreaOne}
@@ -224,15 +296,15 @@ export default function MapScreen({ navigation }) {
           />
           <Geojson
             geojson={polys.mainRoad}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(234, 181, 54, 0.92)"
           />
           <Geojson
             geojson={polys.mainRoad2}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(234, 181, 54, 0.92)"
           />
           <Geojson
             geojson={polys.mainStages}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(196, 237, 116, 0.92)"
           />
           <Geojson
             geojson={polys.nightEntertainment}
@@ -264,7 +336,7 @@ export default function MapScreen({ navigation }) {
           />
           <Geojson
             geojson={polys.westRoad}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(234, 181, 54, 0.92)"
           />
         </View>
 
@@ -272,60 +344,461 @@ export default function MapScreen({ navigation }) {
         <View>
           <Geojson
             geojson={builds.festivalFood}
-            fillColor="rgba(100, 10, 0, 0.4)"
+            fillColor="rgba(217, 55, 138, 0.8)"
           />
           <Geojson
             geojson={builds.festivalInfoTickets}
-            fillColor="rgba(100, 10, 0, 0.4)"
+            fillColor="rgba(46, 189, 64, 0.92)"
           />
           <Geojson
             geojson={builds.festivalMedical}
-            fillColor="rgba(100, 10, 0, 0.4)"
+            fillColor="rgba(191, 0, 0, 0.8)"
           />
           <Geojson
             geojson={builds.festivalStages}
-            fillColor="rgba(100, 10, 0, 0.4)"
+            fillColor="rgba(255, 177, 35, 1)"
           />
           <Geojson
             geojson={builds.festivalToilets}
-            fillColor="rgba(100, 10, 0, 0.4)"
+            fillColor="rgba(164, 87, 4, 0.92)"
           />
           <Geojson
             geojson={builds.festivalVendors}
-            fillColor="rgba(100, 10, 0, 0.4)"
+            fillColor="rgba(185, 164, 140, 0.92)"
           />
         </View>
 
-        {/* FESTIVAL MARKER LOCATIONS */}
+        {/* FESTIVAL STAGE MARKER LOCATIONS */}
         <View>
+          {/* MAIN STAGE */}
           <Marker
             coordinate={{ latitude: 53.8330422, longitude: -1.5027245 }}
             icon={mapPins.stagePin}
             anchor={{ x: 0.5, y: 0.5 }}
-          />
+            onPress={() => {
+              setNavigateTo({ latitude: 53.8330422, longitude: -1.5027245 });
+            }}
+          >
+            <Callout
+              onPress={() => {
+                NavigateTo();
+              }}
+            >
+              <Text>Navigate To: Main Stage</Text>
+            </Callout>
+          </Marker>
+          {/* SECOND STAGE */}
           <Marker
             coordinate={{ latitude: 53.8368202, longitude: -1.5012567 }}
             icon={mapPins.stageTwoPin}
             anchor={{ x: 0.5, y: 0.5 }}
-          />
+            onPress={() => {
+              setNavigateTo({ latitude: 53.8368202, longitude: -1.5012567 });
+            }}
+          >
+            <Callout
+              onPress={() => {
+                NavigateTo();
+              }}
+            >
+              <Text>Navigate To: Local Stage</Text>
+            </Callout>
+          </Marker>
           {/* TENT STAGE */}
           <Marker
-            coordinate={{ latitude: 53.8361067, longitude: -1.5031648 }}
+            coordinate={{ latitude: 53.8361333, longitude: -1.5031872 }}
             icon={mapPins.tentStagePin}
             anchor={{ x: 0.5, y: 0.5 }}
-          />
+            onPress={() => {
+              setNavigateTo({ latitude: 53.8361333, longitude: -1.5031872 });
+            }}
+          >
+            <Callout
+              onPress={() => {
+                NavigateTo();
+              }}
+            >
+              <Text>Navigate To: Tent Stage</Text>
+            </Callout>
+          </Marker>
           {/* NIGHT ENTERTAINMENT STAGE */}
           <Marker
             coordinate={{ latitude: 53.8371708, longitude: -1.4993836 }}
             icon={mapPins.tentStagePin}
             anchor={{ x: 0.5, y: 0.5 }}
-          />
+            onPress={() => {
+              setNavigateTo({ latitude: 53.8371708, longitude: -1.4993836 });
+            }}
+          >
+            <Callout
+              onPress={() => {
+                NavigateTo();
+              }}
+            >
+              <Text>Navigate To: Night Entertainment</Text>
+            </Callout>
+          </Marker>
         </View>
+
+        {/* GEOJSON BUILDING POINTS */}
+        {toggleInfo && (
+          <View>
+            {buildingPoints.infoPoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image source={mapPins.infoPin} style={styles.mapIcons} />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
+        {toggleTickets && (
+          <View>
+            {buildingPoints.ticketsPoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image source={mapPins.ticketsPin} style={styles.mapIcons} />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
+        {toggleMedical && (
+          <View>
+            {buildingPoints.medicalPoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image source={mapPins.medicalPin} style={styles.mapIcons} />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
+        {toggleToilets && (
+          <View>
+            {buildingPoints.toiletsPoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image source={mapPins.toiletsPin} style={styles.mapIcons} />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
+        {toggleVendors && (
+          <View>
+            {buildingPoints.vendorPoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image source={mapPins.vendorPin} style={styles.mapIcons} />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
+        {toggleFood && (
+          <View>
+            {buildingPoints.foodPoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image source={mapPins.foodPin} style={styles.mapIcons} />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
+        {toggleVeggie && (
+          <View>
+            {buildingPoints.veggiePoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image source={mapPins.veggiePin} style={styles.mapIcons} />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
+        {togglePizza && (
+          <View>
+            {buildingPoints.pizzaPoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image source={mapPins.pizzaPin} style={styles.mapIcons} />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
+        {toggleHotdogs && (
+          <View>
+            {buildingPoints.hotdogsPoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image source={mapPins.hotdogPin} style={styles.mapIcons} />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
+        {toggleWater && (
+          <View>
+            {buildingPoints.waterPoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image
+                    source={mapPins.waterPointPin}
+                    style={styles.mapIcons}
+                  />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
 
         {/* POLYLINE RENDER */}
         <View>
           {routePolyline !== null && <Polyline coordinates={routePolyline} />}
         </View>
+
+        {/* SHARED MARKERS */}
+
+        {sharedMarkers !== null && friendVisible && (
+          <View>
+            {sharedMarkers.map((mark: any) => {
+              let sharedPin = mark.pinIcon;
+              if (mark.pinIcon === 22) {
+                sharedPin = mapPins.blueCrossPin;
+              }
+              if (mark.pinIcon === 26) {
+                sharedPin = mapPins.blueTentPin;
+              }
+              if (mark.pinIcon === 29) {
+                sharedPin = mapPins.yellowCrossPin;
+              }
+              return (
+                <Marker
+                  key={mark.markerId}
+                  coordinate={{
+                    latitude: mark.latitude,
+                    longitude: mark.longitude,
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  icon={sharedPin}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: mark.latitude,
+                      longitude: mark.longitude,
+                    });
+                  }}
+                >
+                  <Callout onPress={() => NavigateTo()}>
+                    <Text>Navigate To: {mark.userName}</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
 
         {/* USER MARKERS */}
         {userMarkers !== null && (
@@ -344,7 +817,6 @@ export default function MapScreen({ navigation }) {
                   <View>
                     <Callout
                       onPress={() => {
-                        setNavigateMarker([mark.latitude, mark.longitude]);
                         setNavigateTo({
                           latitude: mark.latitude,
                           longitude: mark.longitude,
@@ -371,7 +843,6 @@ export default function MapScreen({ navigation }) {
                               NavigateTo();
                             }}
                           />
-                          <Button title="Share Marker" onPress={() => {}} />
                           <Button
                             title="Delete Marker"
                             onPress={() => {
@@ -396,35 +867,235 @@ export default function MapScreen({ navigation }) {
           </View>
         )}
       </MapView>
-      <View>
-        <Button
-          title="My Tent"
+
+      {/* MAP BUTTONS */}
+      <View style={styles.mapButtonContainer}>
+        <Pressable
+          onPress={() => {
+            setMyMarker("myMeeting");
+            setMyPinIcon(mapPins.redCrossPin);
+            setSelectMyTent(false);
+            setSelectMyMeeting(true);
+          }}
+          style={() => [
+            {
+              backgroundColor: selectMyMeeting ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>My Meeting</Text>
+        </Pressable>
+        <Pressable
           onPress={() => {
             setMyMarker("myTent");
             setMyPinIcon(mapPins.yellowTentPin);
+            setSelectMyTent(true);
+            setSelectMyMeeting(false);
           }}
-        />
-        <Button
-          title="My Friend"
+          style={() => [
+            {
+              backgroundColor: selectMyTent ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>My Tent</Text>
+        </Pressable>
+        <Pressable
           onPress={() => {
-            setMyMarker("myFriend");
-            setMyPinIcon(mapPins.blueTentPin);
+            handlePosition();
           }}
-        />
-        <Button
-          title="My Meeting"
-          onPress={() => {
-            setMyMarker("myMeeting");
-            setMyPinIcon(mapPins.crossPin);
-          }}
-        />
-        <Button
-          title="Clear Route"
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Mark My Position</Text>
+        </Pressable>
+        <Pressable
           onPress={() => {
             setNavigateTo(null);
             setRoutePolyline(null);
           }}
-        />
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Clear Route</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            ReadFriendsMarkers();
+            if (friendsArray.length === 0) {
+              setNoFriends(true);
+            } else {
+              setNoFriends(false);
+              ReadSharedMarkers();
+              setFriendVisible(true);
+            }
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          {noFriends ? (
+            <Text style={styles.text}>Update or Add Friends</Text>
+          ) : (
+            <Text style={styles.text}>Refresh Friends</Text>
+          )}
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setFriendVisible(!friendVisible);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Friend Markers</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setToggleInfo(!toggleInfo);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Info</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setToggleTickets(!toggleTickets);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Tickets</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setToggleMedical(!toggleMedical);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Medical</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setToggleToilets(!toggleToilets);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Toilets</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setToggleVendors(!toggleVendors);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Vendors</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setToggleFood(!toggleFood);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Food</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setToggleVeggie(!toggleVeggie);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Veggie</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setTogglePizza(!togglePizza);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Pizza</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setToggleHotdogs(!toggleHotdogs);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Hotdogs</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setToggleWater(!toggleWater);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Water</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -439,7 +1110,51 @@ const styles = StyleSheet.create({
   },
   map: {
     width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height * 0.7,
+    height: Dimensions.get("window").height * 0.65,
+  },
+  mapButtonContainer: {
+    flex: 1,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    height: Dimensions.get("window").height * 0.25,
+    justifyContent: "space-evenly",
+    alignContent: "space-between"
+  },
+  mapIcons: {
+    height: 25,
+    width: 25,
+    resizeMode: "contain",
+  },
+  calloutTooltip: {
+    height: 20,
+    minWidth: 80,
+    maxWidth: 200,
+    backgroundColor: "white",
+    borderColor: "black",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  mapIconText: {
+    fontSize: 12,
+    lineHeight: 14,
+    fontWeight: "bold",
+    letterSpacing: 0.25,
+    color: "black",
+  },
+  myButton: {
+    width: "45%",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 1,
+    borderRadius: 4,
+  },
+  text: {
+    fontSize: 12,
+    lineHeight: 21,
+    fontWeight: "bold",
+    letterSpacing: 0.25,
+    color: "black",
   },
 });
 
