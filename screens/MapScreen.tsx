@@ -32,8 +32,6 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase-config/firebase-config";
 import { getAuth } from "firebase/auth";
-import { wrap } from "idb";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function MapScreen({ navigation }: any) {
   const auth = getAuth();
@@ -78,6 +76,20 @@ export default function MapScreen({ navigation }: any) {
   const [togglePizza, setTogglePizza] = useState<boolean>(false);
   const [toggleHotdogs, setToggleHotdogs] = useState<boolean>(false);
   const [toggleWater, setToggleWater] = useState<boolean>(false);
+
+  //Toggle Selects
+  const [selectFriendsVisible, setSelectFriendsVisible] =
+    useState<boolean>(false);
+  const [selectInfo, setSelectInfo] = useState<boolean>(false);
+  const [selectTickets, setSelectTickets] = useState<boolean>(false);
+  const [selectMedical, setSelectMedical] = useState<boolean>(false);
+  const [selectToilets, setSelectToilets] = useState<boolean>(false);
+  const [selectVendors, setSelectVendors] = useState<boolean>(false);
+  const [selectFood, setSelectFood] = useState<boolean>(false);
+  const [selectVeggie, setSelectVeggie] = useState<boolean>(false);
+  const [selectPizza, setSelectPizza] = useState<boolean>(false);
+  const [selectHotdogs, setSelectHotdogs] = useState<boolean>(false);
+  const [selectWater, setSelectWater] = useState<boolean>(false);
 
   //User authentication for using geolocation
   let unsubscribe: any = useRef(() => undefined);
@@ -981,11 +993,14 @@ export default function MapScreen({ navigation }: any) {
           >
             <Pressable
               onPress={() => {
+                setSelectFriendsVisible(!selectFriendsVisible);
                 setFriendVisible(!friendVisible);
               }}
-              style={({ pressed }) => [
+              style={() => [
                 {
-                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                  backgroundColor: selectFriendsVisible
+                    ? "grey"
+                    : "cornflowerblue",
                 },
                 styles.myButton,
               ]}
@@ -994,11 +1009,12 @@ export default function MapScreen({ navigation }: any) {
             </Pressable>
             <Pressable
               onPress={() => {
+                setSelectInfo(!selectInfo);
                 setToggleInfo(!toggleInfo);
               }}
-              style={({ pressed }) => [
+              style={() => [
                 {
-                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                  backgroundColor: selectInfo ? "grey" : "cornflowerblue",
                 },
                 styles.myButton,
               ]}
@@ -1007,11 +1023,12 @@ export default function MapScreen({ navigation }: any) {
             </Pressable>
             <Pressable
               onPress={() => {
+                setSelectTickets(!selectTickets);
                 setToggleTickets(!toggleTickets);
               }}
-              style={({ pressed }) => [
+              style={() => [
                 {
-                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                  backgroundColor: selectTickets ? "grey" : "cornflowerblue",
                 },
                 styles.myButton,
               ]}
@@ -1020,11 +1037,12 @@ export default function MapScreen({ navigation }: any) {
             </Pressable>
             <Pressable
               onPress={() => {
+                setSelectMedical(!selectMedical);
                 setToggleMedical(!toggleMedical);
               }}
-              style={({ pressed }) => [
+              style={() => [
                 {
-                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                  backgroundColor: selectMedical ? "grey" : "cornflowerblue",
                 },
                 styles.myButton,
               ]}
@@ -1033,11 +1051,12 @@ export default function MapScreen({ navigation }: any) {
             </Pressable>
             <Pressable
               onPress={() => {
+                setSelectToilets(!selectToilets);
                 setToggleToilets(!toggleToilets);
               }}
-              style={({ pressed }) => [
+              style={() => [
                 {
-                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                  backgroundColor: selectToilets ? "grey" : "cornflowerblue",
                 },
                 styles.myButton,
               ]}
@@ -1046,11 +1065,12 @@ export default function MapScreen({ navigation }: any) {
             </Pressable>
             <Pressable
               onPress={() => {
+                setSelectVendors(!selectVendors);
                 setToggleVendors(!toggleVendors);
               }}
-              style={({ pressed }) => [
+              style={() => [
                 {
-                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                  backgroundColor: selectVendors ? "grey" : "cornflowerblue",
                 },
                 styles.myButton,
               ]}
@@ -1059,11 +1079,12 @@ export default function MapScreen({ navigation }: any) {
             </Pressable>
             <Pressable
               onPress={() => {
+                setSelectFood(!selectFood);
                 setToggleFood(!toggleFood);
               }}
-              style={({ pressed }) => [
+              style={() => [
                 {
-                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                  backgroundColor: selectFood ? "grey" : "cornflowerblue",
                 },
                 styles.myButton,
               ]}
@@ -1072,11 +1093,12 @@ export default function MapScreen({ navigation }: any) {
             </Pressable>
             <Pressable
               onPress={() => {
+                setSelectVeggie(!selectVeggie);
                 setToggleVeggie(!toggleVeggie);
               }}
-              style={({ pressed }) => [
+              style={() => [
                 {
-                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                  backgroundColor: selectVeggie ? "grey" : "cornflowerblue",
                 },
                 styles.myButton,
               ]}
@@ -1085,11 +1107,12 @@ export default function MapScreen({ navigation }: any) {
             </Pressable>
             <Pressable
               onPress={() => {
+                setSelectPizza(!selectPizza);
                 setTogglePizza(!togglePizza);
               }}
-              style={({ pressed }) => [
+              style={() => [
                 {
-                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                  backgroundColor: selectPizza ? "grey" : "cornflowerblue",
                 },
                 styles.myButton,
               ]}
@@ -1098,11 +1121,12 @@ export default function MapScreen({ navigation }: any) {
             </Pressable>
             <Pressable
               onPress={() => {
+                setSelectHotdogs(!selectHotdogs);
                 setToggleHotdogs(!toggleHotdogs);
               }}
-              style={({ pressed }) => [
+              style={() => [
                 {
-                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                  backgroundColor: selectHotdogs ? "grey" : "cornflowerblue",
                 },
                 styles.myButton,
               ]}
@@ -1111,11 +1135,12 @@ export default function MapScreen({ navigation }: any) {
             </Pressable>
             <Pressable
               onPress={() => {
+                setSelectWater(!selectWater);
                 setToggleWater(!toggleWater);
               }}
-              style={({ pressed }) => [
+              style={() => [
                 {
-                  backgroundColor: pressed ? "grey" : "cornflowerblue",
+                  backgroundColor: selectWater ? "grey" : "cornflowerblue",
                 },
                 styles.myButton,
               ]}
@@ -1151,13 +1176,12 @@ const styles = StyleSheet.create({
   },
   map: {
     width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height * 0.82,
+    height: Dimensions.get("window").height * 0.84,
   },
   mapButtonContainer: {
     flex: 1,
     flexDirection: "row",
     flexWrap: "wrap",
-    height: Dimensions.get("window").height * 0.2,
     justifyContent: "space-evenly",
   },
   mapIcons: {
@@ -1188,7 +1212,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignContent: "center",
     justifyContent: "center",
-    borderRadius: 4,
+    borderRadius: 50,
   },
   text: {
     fontSize: 12,
