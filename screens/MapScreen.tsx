@@ -17,6 +17,7 @@ import { v4 as uuidv4 } from "uuid";
 import * as polys from "../assets/polygons/index";
 import * as builds from "../assets/buildings/index";
 import * as mapPins from "../assets/map-pins/index";
+import * as buildingPoints from "../assets/building-points/index";
 import {
   collection,
   doc,
@@ -423,6 +424,258 @@ export default function MapScreen({ navigation }: any) {
               <Text>Navigate To: Night Entertainment</Text>
             </Callout>
           </Marker>
+        </View>
+
+        {/* GEOJSON BUILDING POINTS */}
+        <View>
+          {buildingPoints.infoPoints.features.map((point) => {
+            return (
+              <Marker
+                key={point.properties.id}
+                coordinate={{
+                  latitude: point.geometry.coordinates[1],
+                  longitude: point.geometry.coordinates[0],
+                }}
+                anchor={{ x: 0.5, y: 0.5 }}
+                icon={mapPins.infoPin}
+                onPress={() => {
+                  setNavigateTo({
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  });
+                }}
+              >
+                <Callout onPress={() => NavigateTo()}>
+                  <Text>Navigate To</Text>
+                </Callout>
+              </Marker>
+            );
+          })}
+        </View>
+        <View>
+          {buildingPoints.ticketsPoints.features.map((point) => {
+            return (
+              <Marker
+                key={point.properties.id}
+                coordinate={{
+                  latitude: point.geometry.coordinates[1],
+                  longitude: point.geometry.coordinates[0],
+                }}
+                anchor={{ x: 0.5, y: 0.5 }}
+                icon={mapPins.ticketsPin}
+                onPress={() => {
+                  setNavigateTo({
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  });
+                }}
+              >
+                <Callout onPress={() => NavigateTo()}>
+                  <Text>Navigate To</Text>
+                </Callout>
+              </Marker>
+            );
+          })}
+        </View>
+        <View>
+          {buildingPoints.medicalPoints.features.map((point) => {
+            return (
+              <Marker
+                key={point.properties.id}
+                coordinate={{
+                  latitude: point.geometry.coordinates[1],
+                  longitude: point.geometry.coordinates[0],
+                }}
+                anchor={{ x: 0.5, y: 0.5 }}
+                icon={mapPins.medicalPin}
+                onPress={() => {
+                  setNavigateTo({
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  });
+                }}
+              >
+                <Callout onPress={() => NavigateTo()}>
+                  <Text>Navigate To</Text>
+                </Callout>
+              </Marker>
+            );
+          })}
+        </View>
+        <View>
+          {buildingPoints.toiletsPoints.features.map((point) => {
+            return (
+              <Marker
+                key={point.properties.id}
+                coordinate={{
+                  latitude: point.geometry.coordinates[1],
+                  longitude: point.geometry.coordinates[0],
+                }}
+                anchor={{ x: 0.5, y: 0.5 }}
+                icon={mapPins.toiletsPin}
+                onPress={() => {
+                  setNavigateTo({
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  });
+                }}
+              >
+                <Callout onPress={() => NavigateTo()}>
+                  <Text>Navigate To</Text>
+                </Callout>
+              </Marker>
+            );
+          })}
+        </View>
+        <View>
+          {buildingPoints.vendorPoints.features.map((point) => {
+            return (
+              <Marker
+                key={point.properties.id}
+                coordinate={{
+                  latitude: point.geometry.coordinates[1],
+                  longitude: point.geometry.coordinates[0],
+                }}
+                anchor={{ x: 0.5, y: 0.5 }}
+                icon={mapPins.vendorPin}
+                onPress={() => {
+                  setNavigateTo({
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  });
+                }}
+              >
+                <Callout onPress={() => NavigateTo()}>
+                  <Text>Navigate To</Text>
+                </Callout>
+              </Marker>
+            );
+          })}
+        </View>
+        <View>
+          {buildingPoints.foodPoints.features.map((point) => {
+            return (
+              <Marker
+                key={point.properties.id}
+                coordinate={{
+                  latitude: point.geometry.coordinates[1],
+                  longitude: point.geometry.coordinates[0],
+                }}
+                anchor={{ x: 0.5, y: 0.5 }}
+                icon={mapPins.foodPin}
+                onPress={() => {
+                  setNavigateTo({
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  });
+                }}
+              >
+                <Callout onPress={() => NavigateTo()}>
+                  <Text>Navigate To</Text>
+                </Callout>
+              </Marker>
+            );
+          })}
+        </View>
+        <View>
+          {buildingPoints.veggiePoints.features.map((point) => {
+            return (
+              <Marker
+                key={point.properties.id}
+                coordinate={{
+                  latitude: point.geometry.coordinates[1],
+                  longitude: point.geometry.coordinates[0],
+                }}
+                anchor={{ x: 0.5, y: 0.5 }}
+                icon={mapPins.veggiePin}
+                onPress={() => {
+                  setNavigateTo({
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  });
+                }}
+              >
+                <Callout onPress={() => NavigateTo()}>
+                  <Text>Navigate To</Text>
+                </Callout>
+              </Marker>
+            );
+          })}
+        </View>
+        <View>
+          {buildingPoints.pizzaPoints.features.map((point) => {
+            return (
+              <Marker
+                key={point.properties.id}
+                coordinate={{
+                  latitude: point.geometry.coordinates[1],
+                  longitude: point.geometry.coordinates[0],
+                }}
+                anchor={{ x: 0.5, y: 0.5 }}
+                icon={mapPins.pizzaPin}
+                onPress={() => {
+                  setNavigateTo({
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  });
+                }}
+              >
+                <Callout onPress={() => NavigateTo()}>
+                  <Text>Navigate To</Text>
+                </Callout>
+              </Marker>
+            );
+          })}
+        </View>
+        <View>
+          {buildingPoints.hotdogsPoints.features.map((point) => {
+            return (
+              <Marker
+                key={point.properties.id}
+                coordinate={{
+                  latitude: point.geometry.coordinates[1],
+                  longitude: point.geometry.coordinates[0],
+                }}
+                anchor={{ x: 0.5, y: 0.5 }}
+                icon={mapPins.hotdogPin}
+                onPress={() => {
+                  setNavigateTo({
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  });
+                }}
+              >
+                <Callout onPress={() => NavigateTo()}>
+                  <Text>Navigate To</Text>
+                </Callout>
+              </Marker>
+            );
+          })}
+        </View>
+        <View>
+          {buildingPoints.waterPoints.features.map((point) => {
+            return (
+              <Marker
+                key={point.properties.id}
+                coordinate={{
+                  latitude: point.geometry.coordinates[1],
+                  longitude: point.geometry.coordinates[0],
+                }}
+                anchor={{ x: 0.5, y: 0.5 }}
+                icon={mapPins.waterPointPin}
+                onPress={() => {
+                  setNavigateTo({
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  });
+                }}
+              >
+                <Callout onPress={() => NavigateTo()}>
+                  <Text>Navigate To</Text>
+                </Callout>
+              </Marker>
+            );
+          })}
         </View>
 
         {/* POLYLINE RENDER */}
