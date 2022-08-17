@@ -9,12 +9,19 @@ import {
   updateDoc,
   arrayUnion,
 } from "@firebase/firestore";
-import { Button, TextInput } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { useState } from "react";
 import { showMessage } from "react-native-flash-message";
 
 export default function AddFriends() {
-    const [email, setEmail] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
 
   const auth = getAuth();
   const user = auth.currentUser;
@@ -65,12 +72,48 @@ export default function AddFriends() {
 
   return (
     <>
-      <TextInput
-        onChangeText={handleEmail}
-        placeholder="Email"
-        accessibilityLabel="Email"
-      />
-      <Button title="Submit" onPress={fetchFriendUid} />
+      <View style={styles.container}>
+        <Text style={styles.text}>
+          Give permission to a friend:
+        </Text>
+        <TextInput
+          onChangeText={handleEmail}
+          placeholder="Email"
+          accessibilityLabel="Email"
+          style={styles.textInput}
+        />
+        <TouchableOpacity onPress={fetchFriendUid} style={styles.button}>
+          <Text style={styles.buttonText}>Submit</Text>
+        </TouchableOpacity>
+      </View>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+  },
+  button: {
+    backgroundColor: "#fb8500",
+    padding: 10,
+    marginTop: 10,
+    width: 150,
+    alignItems: "center",
+    borderRadius: 5,
+  },
+  buttonText: {
+    fontSize: 25,
+  },
+  textInput: {
+    width: Dimensions.get("window").width * 0.9,
+    padding: 5,
+    marginBottom: 10,
+    backgroundColor: "#e5e5e5",
+    borderRadius: 5,
+  },
+  text: {
+    justifyContent: "center",
+    fontSize: 15,
+  },
+});
