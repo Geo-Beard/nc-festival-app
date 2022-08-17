@@ -22,7 +22,7 @@ export default function ProfileScreen({ navigation }: any) {
       .then(() => {
         console.log("Sign out successful");
         setIsLoading(false);
-        navigation.navigate("Signup");
+        navigation.push("Signup");
       })
       .catch((error) => {
         setError(error);
@@ -73,45 +73,6 @@ export default function ProfileScreen({ navigation }: any) {
         {error && <Text>Unable to sign out. Please try again.</Text>}
       </View>
     </ImageBackground>
-  );
-
-  return isLoading ? (
-    <SafeAreaView
-      style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-    >
-      <Text>Loading...</Text>
-    </SafeAreaView>
-  ) : !user ? (
-    <SafeAreaView
-      style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-    >
-      <Text>Please reload the app and sign in.</Text>
-    </SafeAreaView>
-  ) : (
-    <SafeAreaView
-      style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-    >
-      <Text style={styles.header}>Hello, {user?.displayName}.</Text>
-      <Avatar.Image
-        size={120}
-        source={require("../assets/img/avatar_001.jpg")}
-        style={styles.avatar}
-      />
-      <TouchableOpacity onPress={signOut}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Entypo name="log-out" size={24} color="black" />
-          <Text
-            style={{
-              fontSize: 15,
-              marginLeft: 5,
-            }}
-          >
-            Sign Out
-          </Text>
-        </View>
-      </TouchableOpacity>
-      {error && <Text>Unable to sign out. Please try again.</Text>}
-    </SafeAreaView>
   );
 }
 

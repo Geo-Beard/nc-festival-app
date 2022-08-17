@@ -7,6 +7,8 @@ import {
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase-config/firebase-config";
+import { showMessage } from "react-native-flash-message";
+
 
 export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState<{ email: string }>({ email: "" });
@@ -85,6 +87,7 @@ export default function LoginScreen({ navigation }: any) {
           })
           .then(() => {
             setSignupSuccess(true);
+            navigation.push("Login");
           })
           .catch((error) => {
             setSubmitted(false);
@@ -98,9 +101,12 @@ export default function LoginScreen({ navigation }: any) {
 
   return (
     <View style={styles.container}>
-      {signupSuccess && (
-        <Text>Signup successful! Please log in to continue</Text>
-      )}
+      {signupSuccess && 
+        showMessage({
+          message: "Successfull login.",
+          type: "success"
+        })
+      }
         <ImageBackground source={require('../assets/img/img_005.jpg')} resizeMode="cover" style={styles.image}>
         <View style={styles.outerInputView}>
           <View style={styles.inputView}>
@@ -144,8 +150,14 @@ export default function LoginScreen({ navigation }: any) {
           <Pressable style={styles.submitButtons} onPress={() => navigation.navigate("Login")}>
             <Text style={styles.buttonText}>Log in</Text>
           </Pressable>
-          {missingDetailsError && <Text>Missing Details</Text>}
-          {mismatchedPasswordsError && <Text>Passwords Do Not Match</Text>}
+          {missingDetailsError && showMessage({
+            message: "Please complete all fields.",
+            type: "warning"
+          })}
+          {mismatchedPasswordsError && showMessage({
+            message: "Passwords do not match.",
+            type: "warning"
+          })}
         </View>
         </ImageBackground>
     </View>
