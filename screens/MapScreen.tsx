@@ -42,8 +42,8 @@ export default function MapScreen({ navigation }: any) {
   const [markerDeleted, setMarkerDeleted] = useState(false);
   const [routePolyline, setRoutePolyline] = useState<any | null>(null);
   const [markerLoading, setMarkerLoading] = useState<any | null>(null);
-  const [myPinIcon, setMyPinIcon] = useState(mapPins.yellowTentPin);
-  const [myMarker, setMyMarker] = useState("myTent");
+  const [myPinIcon, setMyPinIcon] = useState(mapPins.redCrossPin);
+  const [myMarker, setMyMarker] = useState("myMeeting");
 
   //Modal states
   const [modalVisible, setModalVisible] = useState(false);
@@ -59,8 +59,8 @@ export default function MapScreen({ navigation }: any) {
   const [navigateTo, setNavigateTo] = useState<any | null>(null);
 
   //Button state
-  const [selectMyTent, setSelectMyTent] = useState<boolean>(true);
-  const [selectMyMeeting, setSelectMyMeeting] = useState<boolean>(false);
+  const [selectMyTent, setSelectMyTent] = useState<boolean>(false);
+  const [selectMyMeeting, setSelectMyMeeting] = useState<boolean>(true);
 
   //User authentication for using geolocation
   let unsubscribe: any = useRef(() => undefined);
@@ -542,22 +542,6 @@ export default function MapScreen({ navigation }: any) {
       <View style={styles.mapButtonContainer}>
         <Pressable
           onPress={() => {
-            setMyMarker("myTent");
-            setMyPinIcon(mapPins.yellowTentPin);
-            setSelectMyTent(true);
-            setSelectMyMeeting(false);
-          }}
-          style={() => [
-            {
-              backgroundColor: selectMyTent ? "grey" : "cornflowerblue",
-            },
-            styles.myButton,
-          ]}
-        >
-          <Text style={styles.text}>My Tent</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
             setMyMarker("myMeeting");
             setMyPinIcon(mapPins.redCrossPin);
             setSelectMyTent(false);
@@ -571,6 +555,22 @@ export default function MapScreen({ navigation }: any) {
           ]}
         >
           <Text style={styles.text}>My Meeting</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setMyMarker("myTent");
+            setMyPinIcon(mapPins.yellowTentPin);
+            setSelectMyTent(true);
+            setSelectMyMeeting(false);
+          }}
+          style={() => [
+            {
+              backgroundColor: selectMyTent ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>My Tent</Text>
         </Pressable>
         <Pressable
           onPress={() => {
