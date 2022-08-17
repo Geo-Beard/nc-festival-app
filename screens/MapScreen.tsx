@@ -8,6 +8,7 @@ import {
   Button,
   Modal,
   Pressable,
+  Image,
 } from "react-native";
 import MapView, { Polyline } from "react-native-maps";
 import { Marker, Callout } from "react-native-maps";
@@ -17,6 +18,7 @@ import { v4 as uuidv4 } from "uuid";
 import * as polys from "../assets/polygons/index";
 import * as builds from "../assets/buildings/index";
 import * as mapPins from "../assets/map-pins/index";
+import * as buildingPoints from "../assets/building-points/index";
 import {
   collection,
   doc,
@@ -30,6 +32,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase-config/firebase-config";
 import { getAuth } from "firebase/auth";
+import { wrap } from "idb";
 
 export default function MapScreen({ navigation }: any) {
   const auth = getAuth();
@@ -62,6 +65,18 @@ export default function MapScreen({ navigation }: any) {
   const [selectMyTent, setSelectMyTent] = useState<boolean>(false);
   const [selectMyMeeting, setSelectMyMeeting] = useState<boolean>(true);
 
+  //Toggles
+  const [toggleInfo, setToggleInfo] = useState<boolean>(false);
+  const [toggleTickets, setToggleTickets] = useState<boolean>(false);
+  const [toggleMedical, setToggleMedical] = useState<boolean>(false);
+  const [toggleToilets, setToggleToilets] = useState<boolean>(false);
+  const [toggleVendors, setToggleVendors] = useState<boolean>(false);
+  const [toggleFood, setToggleFood] = useState<boolean>(false);
+  const [toggleVeggie, setToggleVeggie] = useState<boolean>(false);
+  const [togglePizza, setTogglePizza] = useState<boolean>(false);
+  const [toggleHotdogs, setToggleHotdogs] = useState<boolean>(false);
+  const [toggleWater, setToggleWater] = useState<boolean>(false);
+
   //User authentication for using geolocation
   let unsubscribe: any = useRef(() => undefined);
   useEffect(() => {
@@ -81,7 +96,7 @@ export default function MapScreen({ navigation }: any) {
           distanceInterval: 2,
         },
         (loc) => {
-          setLocations(loc.coords); // need useEffect cleanup here - causing memory leak
+          setLocations(loc.coords);
         }
       );
       unsubscribe.current = () => {
@@ -249,11 +264,11 @@ export default function MapScreen({ navigation }: any) {
           />
           <Geojson
             geojson={polys.accessPath}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(234, 181, 54, 0.92)"
           />
           <Geojson
             geojson={polys.accessPath2}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(234, 181, 54, 0.92)"
           />
           <Geojson
             geojson={polys.campingArea}
@@ -261,11 +276,11 @@ export default function MapScreen({ navigation }: any) {
           />
           <Geojson
             geojson={polys.dropOff}
-            fillColor="rgba(130, 30, 190, 0.5)"
+            fillColor="rgba(234, 222, 54, 0.92)"
           />
           <Geojson
             geojson={polys.dropOff2}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(234, 222, 54, 0.92)"
           />
           <Geojson
             geojson={polys.mainAreaOne}
@@ -281,15 +296,15 @@ export default function MapScreen({ navigation }: any) {
           />
           <Geojson
             geojson={polys.mainRoad}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(234, 181, 54, 0.92)"
           />
           <Geojson
             geojson={polys.mainRoad2}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(234, 181, 54, 0.92)"
           />
           <Geojson
             geojson={polys.mainStages}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(196, 237, 116, 0.92)"
           />
           <Geojson
             geojson={polys.nightEntertainment}
@@ -321,7 +336,7 @@ export default function MapScreen({ navigation }: any) {
           />
           <Geojson
             geojson={polys.westRoad}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(234, 181, 54, 0.92)"
           />
         </View>
 
@@ -329,27 +344,27 @@ export default function MapScreen({ navigation }: any) {
         <View>
           <Geojson
             geojson={builds.festivalFood}
-            fillColor="rgba(100, 10, 0, 0.4)"
+            fillColor="rgba(217, 55, 138, 0.8)"
           />
           <Geojson
             geojson={builds.festivalInfoTickets}
-            fillColor="rgba(100, 10, 0, 0.4)"
+            fillColor="rgba(46, 189, 64, 0.92)"
           />
           <Geojson
             geojson={builds.festivalMedical}
-            fillColor="rgba(100, 10, 0, 0.4)"
+            fillColor="rgba(191, 0, 0, 0.8)"
           />
           <Geojson
             geojson={builds.festivalStages}
-            fillColor="rgba(100, 10, 0, 0.4)"
+            fillColor="rgba(255, 177, 35, 1)"
           />
           <Geojson
             geojson={builds.festivalToilets}
-            fillColor="rgba(100, 10, 0, 0.4)"
+            fillColor="rgba(164, 87, 4, 0.92)"
           />
           <Geojson
             geojson={builds.festivalVendors}
-            fillColor="rgba(100, 10, 0, 0.4)"
+            fillColor="rgba(185, 164, 140, 0.92)"
           />
         </View>
 
@@ -424,6 +439,321 @@ export default function MapScreen({ navigation }: any) {
             </Callout>
           </Marker>
         </View>
+
+        {/* GEOJSON BUILDING POINTS */}
+        {toggleInfo && (
+          <View>
+            {buildingPoints.infoPoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image source={mapPins.infoPin} style={styles.mapIcons} />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
+        {toggleTickets && (
+          <View>
+            {buildingPoints.ticketsPoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image source={mapPins.ticketsPin} style={styles.mapIcons} />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
+        {toggleMedical && (
+          <View>
+            {buildingPoints.medicalPoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image source={mapPins.medicalPin} style={styles.mapIcons} />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
+        {toggleToilets && (
+          <View>
+            {buildingPoints.toiletsPoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image source={mapPins.toiletsPin} style={styles.mapIcons} />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
+        {toggleVendors && (
+          <View>
+            {buildingPoints.vendorPoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image source={mapPins.vendorPin} style={styles.mapIcons} />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
+        {toggleFood && (
+          <View>
+            {buildingPoints.foodPoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image source={mapPins.foodPin} style={styles.mapIcons} />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
+        {toggleVeggie && (
+          <View>
+            {buildingPoints.veggiePoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image source={mapPins.veggiePin} style={styles.mapIcons} />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
+        {togglePizza && (
+          <View>
+            {buildingPoints.pizzaPoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image source={mapPins.pizzaPin} style={styles.mapIcons} />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
+        {toggleHotdogs && (
+          <View>
+            {buildingPoints.hotdogsPoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image source={mapPins.hotdogPin} style={styles.mapIcons} />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
+        {toggleWater && (
+          <View>
+            {buildingPoints.waterPoints.features.map((point) => {
+              return (
+                <Marker
+                  key={point.properties.id}
+                  coordinate={{
+                    latitude: point.geometry.coordinates[1],
+                    longitude: point.geometry.coordinates[0],
+                  }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  onPress={() => {
+                    setNavigateTo({
+                      latitude: point.geometry.coordinates[1],
+                      longitude: point.geometry.coordinates[0],
+                    });
+                  }}
+                >
+                  <Image
+                    source={mapPins.waterPointPin}
+                    style={styles.mapIcons}
+                  />
+                  <Callout
+                    tooltip
+                    style={styles.calloutTooltip}
+                    onPress={() => NavigateTo()}
+                  >
+                    <Text style={styles.mapIconText}>Navigate To</Text>
+                  </Callout>
+                </Marker>
+              );
+            })}
+          </View>
+        )}
 
         {/* POLYLINE RENDER */}
         <View>
@@ -636,6 +966,136 @@ export default function MapScreen({ navigation }: any) {
         >
           <Text style={styles.text}>Toggle Friend Markers</Text>
         </Pressable>
+        <Pressable
+          onPress={() => {
+            setToggleInfo(!toggleInfo);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Info</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setToggleTickets(!toggleTickets);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Tickets</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setToggleMedical(!toggleMedical);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Medical</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setToggleToilets(!toggleToilets);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Toilets</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setToggleVendors(!toggleVendors);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Vendors</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setToggleFood(!toggleFood);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Food</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setToggleVeggie(!toggleVeggie);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Veggie</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setTogglePizza(!togglePizza);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Pizza</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setToggleHotdogs(!toggleHotdogs);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Hotdogs</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setToggleWater(!toggleWater);
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "grey" : "cornflowerblue",
+            },
+            styles.myButton,
+          ]}
+        >
+          <Text style={styles.text}>Toggle Water</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -650,24 +1110,47 @@ const styles = StyleSheet.create({
   },
   map: {
     width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height * 0.7,
+    height: Dimensions.get("window").height * 0.65,
   },
   mapButtonContainer: {
+    flex: 1,
     flexDirection: "row",
     flexWrap: "wrap",
-    alignItems: "center",
+    height: Dimensions.get("window").height * 0.25,
+    justifyContent: "space-evenly",
+    alignContent: "space-between"
+  },
+  mapIcons: {
+    height: 25,
+    width: 25,
+    resizeMode: "contain",
+  },
+  calloutTooltip: {
+    height: 20,
+    minWidth: 80,
+    maxWidth: 200,
+    backgroundColor: "white",
+    borderColor: "black",
+    flexDirection: "row",
     justifyContent: "center",
+    alignItems: "center",
+  },
+  mapIconText: {
+    fontSize: 12,
+    lineHeight: 14,
+    fontWeight: "bold",
+    letterSpacing: 0.25,
+    color: "black",
   },
   myButton: {
+    width: "45%",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 4,
-    paddingHorizontal: 32,
+    paddingVertical: 1,
     borderRadius: 4,
-    elevation: 3,
   },
   text: {
-    fontSize: 16,
+    fontSize: 12,
     lineHeight: 21,
     fontWeight: "bold",
     letterSpacing: 0.25,
