@@ -63,7 +63,7 @@ export default function FriendsScreen({ navigation }: any) {
                 <FriendsList user={currentUser} refreshing={refreshing} />
               )}
             </View>
-            <View styles={styles.addContainer}>
+            <View style={styles.addContainer}>
               <AddFriends />
             </View>
           </View>
