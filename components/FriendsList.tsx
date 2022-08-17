@@ -106,7 +106,11 @@ export default function FriendsList({ user, refreshing }: any) {
           <View style={styles.friends}>
             {friendsWithAccess &&
               friendsWithAccess.map((friend) => {
-                return <Text style={styles.friend}>{friend}</Text>;
+                return (
+                  <Text key={friend} style={styles.friend}>
+                    {friend}
+                  </Text>
+                );
               })}
           </View>
         </View>
