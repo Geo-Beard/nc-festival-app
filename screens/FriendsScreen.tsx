@@ -3,17 +3,16 @@ import AddFriends from "../components/AddFriends";
 import FriendsList from "../components/FriendsList";
 import { getAuth } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { Text } from "react-native";
+import { DocumentData } from "firebase/firestore";
 
 export default function FriendsScreen({ navigation }: any) {
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<DocumentData | null>(null);
   const [isLoading, setIsLoading] = useState(true)
 
   function checkAuthStatus() {
     return new Promise((resolve, reject) => {
       try {
         getAuth().onAuthStateChanged((user) => {
-          console.log("userChecked:", user.uid);
           setCurrentUser(user);
           resolve(user);
           setIsLoading(false)
