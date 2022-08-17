@@ -7,11 +7,12 @@ export default function AddEventButton({
   setUserTimetable,
 }) {
   let isInTimetable = false;
-  userTimetable.forEach((time) => {
-    if (time.name === artist.name) {
-      isInTimetable = true;
-    }
-  });
+  if (userTimetable.length !== 0)
+    userTimetable.forEach((time) => {
+      if (time.name === artist.name) {
+        isInTimetable = true;
+      }
+    });
   return (
     <>
       {isInTimetable ? (
