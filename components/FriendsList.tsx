@@ -79,7 +79,7 @@ export default function FriendsList({ user, refreshing }: any) {
         <View style={styles.container}>
           <View style={styles.topContainer}>
             <Text style={styles.headings}>
-              Friends locations you have access to:
+              Friend locations you have access to:
             </Text>
           </View>
           <View style={styles.bottomContainer}>

@@ -73,9 +73,7 @@ export default function AddFriends() {
   return (
     <>
       <View style={styles.container}>
-        <Text style={styles.text}>
-          Give permission to a friend:
-        </Text>
+        <Text style={styles.text}>Give permission to a friend:</Text>
         <TextInput
           onChangeText={handleEmail}
           placeholder="Email"
@@ -115,5 +113,6 @@ const styles = StyleSheet.create({
   text: {
     justifyContent: "center",
     fontSize: 15,
+    color: "white",
   },
 });
