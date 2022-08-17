@@ -1,4 +1,3 @@
-
 import { db } from "../firebase-config/firebase-config";
 import {
   doc,
@@ -14,15 +13,19 @@ import { useEffect, useState } from "react";
 
 export default function FriendsList({ user }: any) {
   const [accessToFriends, setAccessToFriends] = useState<string[] | null>(null);
+  const [friendsWithAccess, setFriendsWithAccess] = useState<string[] | null>(
+    null
+  );
 
   useEffect(() => {
     //fetch users friends to which the user has access to their locations
     fetchAccessToFriends();
+    fetchFriendsWithAccess();
   }, []);
 
   const fetchAccessToFriends = () => {
     //query database for user's friends
-    getDoc(doc(db, "users", `${user?.uid}`))
+    getDoc(doc(db, "users", `${user.uid}`))
       .then((docSnap) => {
         const userData = docSnap.data();
         return userData?.friends;
@@ -46,6 +49,21 @@ export default function FriendsList({ user }: any) {
       });
   };
 
+  const fetchFriendsWithAccess = () => {
+    const q = query(
+      collection(db, "users"),
+      where("friends", "array-contains", user.uid)
+    );
+    getDocs(q).then((docs) => {
+      const friends: string[] = [];
+      docs.forEach((doc) => {
+        const friend = doc.data().userEmail;
+        friends.push(friend);
+      });
+      setFriendsWithAccess(friends);
+    });
+  };
+
   return (
     <>
       <Text>Friends that you have location access to:</Text>
@@ -56,6 +74,11 @@ export default function FriendsList({ user }: any) {
       ) : (
         <Text>No friends...but there's still time!</Text>
       )}
+      <Text>Friends with access to your location:</Text>
+      {friendsWithAccess &&
+        friendsWithAccess.map((friend) => {
+          return <Text>{friend}</Text>;
+        })}
     </>
   );
 }
