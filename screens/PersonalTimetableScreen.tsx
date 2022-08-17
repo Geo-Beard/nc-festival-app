@@ -161,7 +161,6 @@ export default function PersonalTimetableScreen() {
                 onPress={() => {
                   setModalVisible(!modalVisible);
                   Create();
-                  console.log(userID);
                 }}
               >
                 <Text style={styles.textStyle}>Save</Text>
