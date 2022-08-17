@@ -7,6 +7,7 @@ import {
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase-config/firebase-config";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState<{ email: string }>({ email: "" });
@@ -96,7 +97,7 @@ export default function LoginScreen({ navigation }: any) {
   }, [submitted]);
 
   return (
-    <>
+    <SafeAreaView>
       {signupSuccess && (
         <Text>Signup successful! Please log in to continue</Text>
       )}
@@ -131,11 +132,7 @@ export default function LoginScreen({ navigation }: any) {
         <Button onPress={() => navigation.navigate("Photos")} title="Photos" />
         <Button onPress={() => navigation.navigate("Map")} title="Map" />
         <Button onPress={() => navigation.navigate("Timetable")} title="Timetable" />
-        <Button
-          onPress={() => navigation.navigate("Friends")}
-          title="Friends"
-        />
       </View>
-    </>
+    </SafeAreaView>
   );
 }
