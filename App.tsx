@@ -7,6 +7,7 @@ import PersonalTimetableScreen from "./screens/PersonalTimetableScreen"
 import UploadPhotoScreen from './screens/UploadPhotoScreen';
 import DatabaseTest from './screens/DatabaseTest'
 import LandingScreen from './screens/LandingScreen';
+import PhotosScreen from './screens/PhotosScreen';
 // NOTIFICATION MESSAGES:
 import FlashMessage from 'react-native-flash-message';
 // NAVIGATION:
@@ -25,6 +26,7 @@ export default function App() {
           <Stack.Screen name="Profile" component={TabNavigator} />
           <Stack.Screen name="Test" component={DatabaseTest} />
           <Stack.Screen name="Landing" component={LandingScreen} />
+          {/* <Stack.Screen name="Photos" component={PhotosScreen} /> */}
         </Stack.Navigator>
         <FlashMessage position="top"/>
       </NavigationContainer>

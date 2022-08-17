@@ -10,7 +10,6 @@ import { db } from "../firebase-config/firebase-config";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen({ navigation }: any) {
-  const image = { uri: "https://images.unsplash.com/photo-1520095972714-909e91b038e5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80" };
   const [email, setEmail] = useState<{ email: string }>({ email: "" });
   const [password, setPassword] = useState<{ password: string }>({
     password: "",
@@ -103,7 +102,7 @@ export default function LoginScreen({ navigation }: any) {
       {signupSuccess && (
         <Text>Signup successful! Please log in to continue</Text>
       )}
-        <ImageBackground source={image} resizeMode="cover" style={styles.image}>
+        <ImageBackground source={require('../assets/img/img_005.jpg')} resizeMode="cover" style={styles.image}>
         <View style={styles.outerInputView}>
           <View style={styles.inputView}>
             <TextInput style={styles.inputText}

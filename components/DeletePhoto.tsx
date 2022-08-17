@@ -2,6 +2,7 @@ import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
 import { db } from "../firebase-config/firebase-config";
 import { doc, deleteDoc, DocumentData } from "firebase/firestore";
 import { Dispatch, SetStateAction } from "react";
+import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 //error notification
 import { showMessage } from "react-native-flash-message";
 
@@ -28,7 +29,7 @@ export default function DeletePhoto({ photo, setIsDeleted }: propsInterface) {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.button} onPress={handleDelete}>
-        <Text>Delete</Text>
+        <MaterialCommunityIcons name="delete-circle" size={24} color="white" />
       </TouchableOpacity>
     </View>
   );
@@ -39,10 +40,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   button: {
-    alignItems: "center",
-    backgroundColor: "#ff477e",
-    padding: 10,
-    borderBottomLeftRadius: 25,
+    // backgroundColor: "rgba(0, 0, 0, 0.8)",
     height: 40,
+    marginLeft: "auto",
+    marginRight: "auto",
+    marginTop: 6,
+    alignItems: "center",
   },
 });

@@ -1,6 +1,7 @@
 import { Image, StyleSheet, View, Dimensions } from "react-native";
 import { DocumentData } from "firebase/firestore";
 import { useState } from "react";
+import { LinearGradient } from 'expo-linear-gradient';
 //components
 import LikeButton from "./LikeButton";
 import DeletePhoto from "../components/DeletePhoto";
@@ -22,12 +23,12 @@ export default function SinglePhoto({ photo, userId }: propsInterface) {
             style={styles.image}
             key={photo.imageId}
           />
-        </View>
-        <View style={styles.buttonContainer}>
-          {matchingId && (
-            <DeletePhoto photo={photo} setIsDeleted={setIsDeleted} />
-          )}
-          <LikeButton photo={photo} userId={userId} matchingId={matchingId}/>
+          <LinearGradient colors={['transparent', "rgba(0, 0, 0, 0.8)"]} style={styles.buttonGradient}>
+            <View style={styles.buttonContainer}>
+              {matchingId && (<DeletePhoto photo={photo} setIsDeleted={setIsDeleted} />)}
+              <LikeButton photo={photo} userId={userId} matchingId={matchingId}/>
+            </View>
+          </LinearGradient>
         </View>
       </View>
     </>
@@ -39,22 +40,28 @@ export default function SinglePhoto({ photo, userId }: propsInterface) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: Dimensions.get("window").width * 0.9,
-    marginVertical: 10,
+    width: Dimensions.get("window").width * 1,
   },
   image: {
     width: "100%",
-    height: 200,
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
+    height: '100%',
   },
   imageContainer: {
     justifyContent: "center",
     alignItems: "center",
+    height: 200
+  },
+  buttonGradient: {
+    zIndex: 1,
+    position: "absolute",
+    bottom: 0,
+    width: '100%',
+    height: 70,
   },
   buttonContainer: {
     flex: 1,
     flexDirection: "row",
-    borderBottomRightRadius: 100,
+    position: 'absolute',
+    bottom: 0
   }
 });
