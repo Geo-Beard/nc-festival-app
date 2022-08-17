@@ -11,7 +11,7 @@ import { Text } from "react-native";
 
 import { useEffect, useState } from "react";
 
-export default function FriendsList({ user }: any) {
+export default function FriendsList({ user, refreshing }: any) {
   const [accessToFriends, setAccessToFriends] = useState<string[] | null>(null);
   const [friendsWithAccess, setFriendsWithAccess] = useState<string[] | null>(
     null
@@ -22,6 +22,14 @@ export default function FriendsList({ user }: any) {
     fetchAccessToFriends();
     fetchFriendsWithAccess();
   }, []);
+
+  //useEffect to run on refresh
+  useEffect(() => {
+    if (refreshing) {
+      fetchAccessToFriends();
+      fetchFriendsWithAccess();
+    }
+  }, [refreshing]);
 
   const fetchAccessToFriends = () => {
     //query database for user's friends
