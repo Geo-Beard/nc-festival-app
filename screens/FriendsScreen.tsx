@@ -4,7 +4,7 @@ import FriendsList from "../components/FriendsList";
 import { getAuth } from "firebase/auth";
 import { useEffect, useState, useCallback } from "react";
 import { DocumentData } from "firebase/firestore";
-import { ScrollView, RefreshControl } from "react-native";
+import { ScrollView, RefreshControl, View, StyleSheet } from "react-native";
 
 export default function FriendsScreen({ navigation }: any) {
   const [currentUser, setCurrentUser] = useState<DocumentData | null>(null);
@@ -46,11 +46,34 @@ export default function FriendsScreen({ navigation }: any) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <AddFriends />
-        {currentUser && !isLoading && (
-          <FriendsList user={currentUser} refreshing={refreshing} />
-        )}
+        <View style={styles.container}>
+          <View style={styles.listsContainer}>
+            {currentUser && !isLoading && (
+              <FriendsList user={currentUser} refreshing={refreshing} />
+            )}
+          </View>
+          <View styles={styles.addContainer}>
+            <AddFriends />
+          </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 100,
+  },
+  listsContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  addContainer: {
+    
+  }
+});

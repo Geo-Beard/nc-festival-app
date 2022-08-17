@@ -7,7 +7,7 @@ import {
   collection,
   where,
 } from "@firebase/firestore";
-import { Text } from "react-native";
+import { Text, StyleSheet, View, Dimensions } from "react-native";
 
 import { useEffect, useState } from "react";
 
@@ -74,19 +74,78 @@ export default function FriendsList({ user, refreshing }: any) {
 
   return (
     <>
-      <Text>Friends that you have location access to:</Text>
-      {accessToFriends ? (
-        accessToFriends.map((friend) => {
-          return <Text key={friend}>{friend}</Text>;
-        })
-      ) : (
-        <Text>No friends...but there's still time!</Text>
-      )}
-      <Text>Friends with access to your location:</Text>
-      {friendsWithAccess &&
-        friendsWithAccess.map((friend) => {
-          return <Text>{friend}</Text>;
-        })}
+      <View style={styles.container}>
+        <View style={styles.topContainer}>
+          <Text style={styles.headings}>
+            Friends locations you have access to:
+          </Text>
+        </View>
+        <View style={styles.bottomContainer}>
+          <View style={styles.friends}>
+            {accessToFriends ? (
+              accessToFriends.map((friend) => {
+                return (
+                  <Text key={friend} style={styles.friend}>
+                    {friend}
+                  </Text>
+                );
+              })
+            ) : (
+              <Text>No friends...but there's still time!</Text>
+            )}
+          </View>
+        </View>
+      </View>
+      <View style={styles.container}>
+        <View style={styles.topContainer}>
+          <Text style={styles.headings}>
+            Friends with access to your location:
+          </Text>
+        </View>
+        <View style={styles.bottomContainer}>
+          <View style={styles.friends}>
+            {friendsWithAccess &&
+              friendsWithAccess.map((friend) => {
+                return <Text style={styles.friend}>{friend}</Text>;
+              })}
+          </View>
+        </View>
+      </View>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: "#e5e5e5",
+    borderRadius: 10,
+    width: Dimensions.get("window").width * 0.9,
+    marginVertical: 15,
+  },
+  topContainer: {
+    alignItems: "center",
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
+    width: "100%",
+    backgroundColor: "#8ecae6",
+  },
+  bottomContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headings: {
+    fontWeight: "900",
+    fontSize: 16,
+    marginVertical: 10,
+  },
+  friends: {
+    alignItems: "center",
+  },
+  friend: {
+    fontSize: 15,
+    marginBottom: 4,
+  },
+});
