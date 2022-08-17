@@ -10,7 +10,6 @@ import {
   arrayUnion,
 } from "@firebase/firestore";
 import {
-  Button,
   StyleSheet,
   Text,
   TextInput,
@@ -74,13 +73,15 @@ export default function AddFriends() {
   return (
     <>
       <View style={styles.container}>
+        <Text style={styles.text}>
+          Give permission to a friend:
+        </Text>
         <TextInput
           onChangeText={handleEmail}
           placeholder="Email"
           accessibilityLabel="Email"
           style={styles.textInput}
         />
-        {/* <Button title="Submit" onPress={fetchFriendUid} style={styles.button} /> */}
         <TouchableOpacity onPress={fetchFriendUid} style={styles.button}>
           <Text style={styles.buttonText}>Submit</Text>
         </TouchableOpacity>
@@ -94,21 +95,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    backgroundColor: "#8338ec",
+    backgroundColor: "#fb8500",
     padding: 10,
     marginTop: 10,
     width: 150,
-     alignItems: "center",
+    alignItems: "center",
+    borderRadius: 5,
   },
   buttonText: {
-    fontSize: 30,
+    fontSize: 25,
   },
   textInput: {
     width: Dimensions.get("window").width * 0.9,
-    // justifyContent: "center",
-    // alignItems: "center",
     padding: 5,
     marginBottom: 10,
-    backgroundColor: "#8ecae6",
+    backgroundColor: "#e5e5e5",
+    borderRadius: 5,
+  },
+  text: {
+    justifyContent: "center",
+    fontSize: 15,
   },
 });

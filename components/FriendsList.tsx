@@ -10,6 +10,7 @@ import {
 import { Text, StyleSheet, View, Dimensions } from "react-native";
 
 import { useEffect, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function FriendsList({ user, refreshing }: any) {
   const [accessToFriends, setAccessToFriends] = useState<string[] | null>(null);
@@ -74,47 +75,49 @@ export default function FriendsList({ user, refreshing }: any) {
 
   return (
     <>
-      <View style={styles.container}>
-        <View style={styles.topContainer}>
-          <Text style={styles.headings}>
-            Friends locations you have access to:
-          </Text>
-        </View>
-        <View style={styles.bottomContainer}>
-          <View style={styles.friends}>
-            {accessToFriends ? (
-              accessToFriends.map((friend) => {
-                return (
-                  <Text key={friend} style={styles.friend}>
-                    {friend}
-                  </Text>
-                );
-              })
-            ) : (
-              <Text>No friends...but there's still time!</Text>
-            )}
+      <SafeAreaView>
+        <View style={styles.container}>
+          <View style={styles.topContainer}>
+            <Text style={styles.headings}>
+              Friends locations you have access to:
+            </Text>
+          </View>
+          <View style={styles.bottomContainer}>
+            <View style={styles.friends}>
+              {accessToFriends ? (
+                accessToFriends.map((friend) => {
+                  return (
+                    <Text key={friend} style={styles.friend}>
+                      {friend}
+                    </Text>
+                  );
+                })
+              ) : (
+                <Text>No friends...but there's still time!</Text>
+              )}
+            </View>
           </View>
         </View>
-      </View>
-      <View style={styles.container}>
-        <View style={styles.topContainer}>
-          <Text style={styles.headings}>
-            Friends with access to your location:
-          </Text>
-        </View>
-        <View style={styles.bottomContainer}>
-          <View style={styles.friends}>
-            {friendsWithAccess &&
-              friendsWithAccess.map((friend) => {
-                return (
-                  <Text key={friend} style={styles.friend}>
-                    {friend}
-                  </Text>
-                );
-              })}
+        <View style={styles.container}>
+          <View style={styles.topContainer}>
+            <Text style={styles.headings}>
+              Friends with access to your location:
+            </Text>
+          </View>
+          <View style={styles.bottomContainer}>
+            <View style={styles.friends}>
+              {friendsWithAccess &&
+                friendsWithAccess.map((friend) => {
+                  return (
+                    <Text key={friend} style={styles.friend}>
+                      {friend}
+                    </Text>
+                  );
+                })}
+            </View>
           </View>
         </View>
-      </View>
+      </SafeAreaView>
     </>
   );
 }
@@ -123,7 +126,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "#e5e5e5",
+    backgroundColor: "rgba(230,230,230,0.8)",
     borderRadius: 10,
     width: Dimensions.get("window").width * 0.9,
     marginVertical: 15,
@@ -133,7 +136,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
     width: "100%",
-    backgroundColor: "#8ecae6",
+    backgroundColor: "#fb8500",
   },
   bottomContainer: {
     flex: 1,
