@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
-import { Text, StyleSheet, View} from 'react-native';
-import { Avatar } from 'react-native-paper';
-import { TouchableOpacity, ImageBackground } from 'react-native';
-import { Entypo } from '@expo/vector-icons';
+import { Text, StyleSheet, View } from "react-native";
+import { Avatar } from "react-native-paper";
+import { TouchableOpacity, ImageBackground } from "react-native";
+import { Entypo } from "@expo/vector-icons";
 
 export default function ProfileScreen({ navigation }: any) {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,45 +15,65 @@ export default function ProfileScreen({ navigation }: any) {
     setIsLoading(false);
   }, []);
 
-    function signOut() {
-      setIsLoading(true);
-      auth.signOut()
-        .then(() => {
-          console.log("Sign out successful");
-          setIsLoading(false);
-          navigation.navigate("Signup");
-        })
-        .catch((error) => {
-          setError(error);
-          console.log(error);
-          setIsLoading(false);
-        });
-    }
+  function signOut() {
+    setIsLoading(true);
+    auth
+      .signOut()
+      .then(() => {
+        console.log("Sign out successful");
+        setIsLoading(false);
+        navigation.navigate("Signup");
+      })
+      .catch((error) => {
+        setError(error);
+        console.log(error);
+        setIsLoading(false);
+      });
+  }
 
-    return isLoading ? (<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><Text>Loading...</Text></View>) : 
-    !user ? (<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><Text>Please reload the app and sign in.</Text></View>) : (
-        <ImageBackground source={require('../assets/img/img_003.jpg')} resizeMode="cover" style={styles.image} imageStyle={{opacity:0.2}}>
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={styles.header}>Hello, {user?.displayName}.</Text>
-          <Avatar.Image size={220} source={require('../assets/img/img_003.jpg')} style={styles.avatar} />
-          <View style={styles.signOut}>
-            <TouchableOpacity onPress={signOut}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Entypo name='log-out' size={24} color='white' />
-                  <Text style={{
-                    fontSize: 15,
-                    marginLeft: 5,
-                    color: "white",
-                    lineHeight: 45
-                  }}
-                  >Sign Out</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          {error && <Text>Unable to sign out. Please try again.</Text>}
+  return isLoading ? (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Text>Loading...</Text>
+    </View>
+  ) : !user ? (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Text>Please reload the app and sign in.</Text>
+    </View>
+  ) : (
+    <ImageBackground
+      source={require("../assets/img/img_003.jpg")}
+      resizeMode="cover"
+      style={styles.image}
+      imageStyle={{ opacity: 0.2 }}
+    >
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <Text style={styles.header}>Hello, {user?.displayName}.</Text>
+        <Avatar.Image
+          size={220}
+          source={require("../assets/img/img_003.jpg")}
+          style={styles.avatar}
+        />
+        <View style={styles.signOut}>
+          <TouchableOpacity onPress={signOut}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Entypo name="log-out" size={24} color="white" />
+              <Text
+                style={{
+                  fontSize: 15,
+                  marginLeft: 5,
+                  color: "white",
+                  lineHeight: 45,
+                }}
+              >
+                Sign Out
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
-        </ImageBackground>
-      );
+        {error && <Text>Unable to sign out. Please try again.</Text>}
+      </View>
+    </ImageBackground>
+  );
 
   return isLoading ? (
     <SafeAreaView
@@ -98,11 +118,11 @@ export default function ProfileScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   header: {
     fontSize: 40,
-    justifyContent: 'center',
-    marginBottom: 75
+    justifyContent: "center",
+    marginBottom: 75,
   },
   avatar: {
-    justifyContent: 'center',
+    justifyContent: "center",
     marginBottom: 75,
   },
   image: {

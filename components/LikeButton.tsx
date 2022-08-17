@@ -91,11 +91,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   likeButton: {
-    // backgroundColor: "rgba(0, 0, 0, 0.8)",
     height: 40,
     marginLeft: "auto",
     marginRight: "auto",
-    // marginBottom: 5,
     alignItems: "center",
   },
 });

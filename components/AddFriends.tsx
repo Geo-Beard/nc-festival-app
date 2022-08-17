@@ -37,7 +37,6 @@ export default function AddFriends() {
         type: "success",
       });
     } catch (e) {
-      // console.log(e);
       showMessage({
         message: "Something went wrong. Please try again.",
         type: "warning",

@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
+import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { db } from "../firebase-config/firebase-config";
 import { doc, deleteDoc, DocumentData } from "firebase/firestore";
 import { Dispatch, SetStateAction } from "react";
@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   button: {
-    // backgroundColor: "rgba(0, 0, 0, 0.8)",
     height: 40,
     marginLeft: "auto",
     marginRight: "auto",

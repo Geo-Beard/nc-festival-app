@@ -1,9 +1,9 @@
-import { View, Text, Button, TextInput, ImageBackground, StyleSheet, Pressable } from "react-native";
+import { View, Text, TextInput, ImageBackground, StyleSheet, Pressable } from "react-native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { app } from "../firebase-config/firebase-config";
 import { useState, useEffect } from "react";
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen({ navigation }:any) {
   const [submitted, setSubmitted] = useState(false);
   const [email, setEmail] = useState<{ email: string }>({ email: "" });
   const [password, setPassword] = useState<{ password: string }>({

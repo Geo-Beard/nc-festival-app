@@ -1,4 +1,4 @@
-import { useState } from "react";
+
 import { Pressable, StyleSheet, Text } from "react-native";
 
 export default function AddEventButton({

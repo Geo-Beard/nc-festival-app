@@ -30,13 +30,6 @@ export default function PhotosScreen({ navigation }: any) {
     retrievedDocuments();
   }, []);
 
-  // useEffect(() => {
-  //   if (navigation.isFocused()) {
-  //     setIsLoading(true);
-  //     retrievedDocuments();
-  //   }
-  // }, [navigation.isFocused()]);
-
   return (
     <View style={{ flex: 1, alignItems: 'center', paddingTop: 80 }}>
       <View style={styles.uploadBtn}>
