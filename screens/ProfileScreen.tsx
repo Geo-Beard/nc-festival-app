@@ -21,7 +21,7 @@ export default function ProfileScreen({ navigation }: any) {
         .then(() => {
           console.log("Sign out successful");
           setIsLoading(false);
-          navigation.navigate("Signup");
+          navigation.push("Signup");
         })
         .catch((error) => {
           setError(error);
