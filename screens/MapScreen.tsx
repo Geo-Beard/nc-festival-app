@@ -52,6 +52,7 @@ export default function MapScreen({ navigation }: any) {
   //Shared Markers
   const [sharedMarkers, setSharedMarkers] = useState<any | null>(null);
   const [friendVisible, setFriendVisible] = useState<boolean>(true);
+  const [friendsArray, setFriendsArray] = useState<any>([]);
 
   //Navigation state
   const [navigateTo, setNavigateTo] = useState<any | null>(null);
@@ -78,7 +79,7 @@ export default function MapScreen({ navigation }: any) {
           distanceInterval: 2,
         },
         (loc) => {
-          setLocations(loc.coords);
+          setLocations(loc.coords); // need useEffect cleanup here - causing memory leak
         }
       );
       setMarkerLoading(true);
@@ -126,6 +127,7 @@ export default function MapScreen({ navigation }: any) {
     friendData?.friends.forEach((friend: string) => {
       friendArray.push(friend);
     });
+    setFriendsArray(friendArray);
     return friendArray;
   }
 
@@ -591,8 +593,13 @@ export default function MapScreen({ navigation }: any) {
         </Pressable>
         <Pressable
           onPress={() => {
-            ReadSharedMarkers();
-            setFriendVisible(true);
+            ReadFriendsMarkers();
+            if (friendsArray.length === 0) {
+              console.log("No friends");
+            } else {
+              ReadSharedMarkers();
+              setFriendVisible(true);
+            }
           }}
           style={({ pressed }) => [
             {
