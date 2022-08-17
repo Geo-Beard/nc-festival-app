@@ -284,11 +284,11 @@ export default function MapScreen({ navigation }: any) {
           />
           <Geojson
             geojson={polys.mainAreaOne}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(209, 88, 101, 0.92)"
           />
           <Geojson
             geojson={polys.mainCamping}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(28, 135, 132, 0.92)"
           />
           <Geojson
             geojson={polys.mainParking}
@@ -308,31 +308,31 @@ export default function MapScreen({ navigation }: any) {
           />
           <Geojson
             geojson={polys.nightEntertainment}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(118, 207, 203, 0.92)"
           />
           <Geojson
             geojson={polys.staffCamping}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(192, 60, 41, 0.92)"
           />
           <Geojson
             geojson={polys.staffEntrance}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(192, 60, 41, 0.92)"
           />
           <Geojson
             geojson={polys.staffParking}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(188, 96, 82, 0.92)"
           />
           <Geojson
             geojson={polys.vendorsArea}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(207, 155, 189, 0.92)"
           />
           <Geojson
             geojson={polys.vendorArea2}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(207, 155, 189, 0.92)"
           />
           <Geojson
             geojson={polys.vipCamping}
-            fillColor="rgba(42, 30, 190, 0.5)"
+            fillColor="rgba(175, 78, 186, 0.92)"
           />
           <Geojson
             geojson={polys.westRoad}
@@ -1118,7 +1118,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     height: Dimensions.get("window").height * 0.25,
     justifyContent: "space-evenly",
-    alignContent: "space-between"
+    alignContent: "space-between",
   },
   mapIcons: {
     height: 25,
