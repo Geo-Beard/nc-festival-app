@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Image, View, Alert, Platform, Text } from "react-native";
+import { TouchableOpacity, Image, View, Alert, Platform, Text, StyleSheet } from "react-native";
 //select image
 import * as ImagePicker from "expo-image-picker";
 //upload image to firebase
@@ -16,7 +16,7 @@ import { db } from "../firebase-config/firebase-config";
 //get current signed-in user
 import { getAuth } from "firebase/auth";
 
-export default function UploadPhotoScreen() {
+export default function UploadPhotoScreen({ navigation }: any) {
   const [image, setImage] = useState<string | undefined>();
   const [hasPermission, setHasPermission] = useState(false);
   const [isUploaded, setIsUploaded] = useState(false);
@@ -84,32 +84,71 @@ export default function UploadPhotoScreen() {
     }
   };
 
+  useEffect(() => {
+    isUploaded && navigation.push("Profile", {screen: "Photos"});
+  }, [isUploaded])
+
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+    <View style={styles.container}>
       {image && (
-        <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
+        <Image source={{ uri: image }} style={{ width: "100%", height: 200, marginBottom: 25 }} />
       )}
-      <Button
-        title="Select Photo"
-        onPress={() => {
-          setUploadError(false);
-          pickImage();
-          setIsUploaded(false);
-        }}
-        disabled={!hasPermission}
-      />
-      <Button
-        title="Upload Photo"
-        onPress={() => {
-          setIsUploaded(false);
-          setUploadError(false);
-          uploadImage();
-        }}
-      />
+      <TouchableOpacity style={image ? styles.greyButton : styles.button} onPress={() => {
+        setUploadError(false);
+        pickImage();
+        setIsUploaded(false);
+      }} disabled={!hasPermission}
+      >
+        <Text style={styles.buttonText}>{image ? "Re-select photo" : "Select photo"}</Text>
+      </TouchableOpacity>
+
+      {image && (
+        <TouchableOpacity style={styles.button}
+          onPress={() => {
+            setIsUploaded(false);
+            setUploadError(false);
+            uploadImage();
+          }}
+        >
+          <Text style={styles.buttonText}>Post photo</Text>
+        </TouchableOpacity>
+      )}
       {isUploaded && <Text>Photo was uploaded successfully!</Text>}
-      {uploadError && (
-        <Text>Unable to upload selected photo, please try again</Text>
-      )}
+      {uploadError && (<Text>Unable to upload selected photo, please try again</Text>)}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { 
+    flex: 1, 
+    flexDirection: "column",
+    alignItems: "center", 
+    justifyContent: "center",
+
+  },
+  button: {
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    borderRadius: 30,
+    width: "50%",
+    height: 45,
+    marginLeft: "auto",
+    marginRight: "auto",
+    marginBottom: 25,
+    alignItems: "center",
+  },
+  greyButton: {
+    backgroundColor: "lightgrey",
+    borderRadius: 30,
+    width: "50%",
+    height: 45,
+    marginLeft: "auto",
+    marginRight: "auto",
+    marginBottom: 25,
+    alignItems: "center",
+  },
+  buttonText: {
+    lineHeight: 45,
+    color: "white",
+  }
+});

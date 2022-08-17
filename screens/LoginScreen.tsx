@@ -4,7 +4,6 @@ import { app } from "../firebase-config/firebase-config";
 import { useState, useEffect } from "react";
 
 export default function LoginScreen({ navigation }) {
-  const image = { uri: "https://images.unsplash.com/photo-1520095972714-909e91b038e5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80" };
   const [submitted, setSubmitted] = useState(false);
   const [email, setEmail] = useState<{ email: string }>({ email: "" });
   const [password, setPassword] = useState<{ password: string }>({
@@ -41,7 +40,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <ImageBackground source={image} resizeMode="cover" style={styles.image}>
+      <ImageBackground source={require('../assets/img/img_005.jpg')} resizeMode="cover" style={styles.image}>
       <View style={styles.outerInputView}>
         <View style={styles.inputView}>
           <TextInput style={styles.inputText}

@@ -1,4 +1,5 @@
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
+import { FontAwesome } from '@expo/vector-icons';
 //update database after 'like'
 import { db } from "../firebase-config/firebase-config";
 import {
@@ -61,20 +62,25 @@ export default function LikeButton({
   };
 
   const bgColor = !isLiked ? "#a2d2ff" : "#57cc99";
-  const border = !matchingId ? 25 : 0;
+  // const border = !matchingId ? 25 : 0;
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={[
           styles.likeButton,
-          { backgroundColor: bgColor, borderBottomLeftRadius: border },
+
         ]}
         onPress={handleLike}
       >
-        <Text>
-          {!isLiked ? "Like" : "Liked"} {`| ${likeCount}`}
-        </Text>
+
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <FontAwesome name={!isLiked ? "heart-o" : "heart"} size={18} color="white" />
+          <Text style={{fontSize: 15, lineHeight: 40, color: "white", fontWeight: "bold"}}>
+            {`  |  ${likeCount}`}
+          </Text>
+        </View>
+
       </TouchableOpacity>
     </View>
   );
@@ -83,12 +89,13 @@ export default function LikeButton({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
   },
   likeButton: {
-    alignItems: "center",
-    padding: 10,
+    // backgroundColor: "rgba(0, 0, 0, 0.8)",
     height: 40,
-    borderBottomRightRadius: 25,
+    marginLeft: "auto",
+    marginRight: "auto",
+    // marginBottom: 5,
+    alignItems: "center",
   },
 });
