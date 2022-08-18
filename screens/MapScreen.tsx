@@ -781,10 +781,10 @@ export default function MapScreen({ navigation }: any) {
             {sharedMarkers.map((mark: any) => {
               let sharedPin = mark.pinIcon;
               if (mark.pinIcon === 22) {
-                sharedPin = mapPins.blueCrossPin;
+                sharedPin = mapPins.blueTentPin;
               }
               if (mark.pinIcon === 26) {
-                sharedPin = mapPins.blueTentPin;
+                sharedPin = mapPins.blueCrossPin;
               }
               if (mark.pinIcon === 29) {
                 sharedPin = mapPins.yellowCrossPin;
@@ -978,7 +978,7 @@ export default function MapScreen({ navigation }: any) {
             styles.myButton,
           ]}
         >
-          <Text style={styles.text}>Togglables</Text>
+          <Text style={styles.text}>Toggleables</Text>
         </Pressable>
 
         {/* TOGGLES  */}
@@ -1158,7 +1158,7 @@ export default function MapScreen({ navigation }: any) {
                 styles.myButton,
               ]}
             >
-              <Text style={styles.text}>Close Togglables</Text>
+              <Text style={styles.text}>Close Toggleables</Text>
             </Pressable>
           </Modal>
         )}
